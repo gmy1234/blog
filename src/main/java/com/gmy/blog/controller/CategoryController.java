@@ -25,7 +25,7 @@ import java.util.List;
  * @author gmydl
  * @title: CategoryController
  * @projectName blog-api
- * @description: TODO
+ * @description: 分类API
  * @date 2022/5/24 22:00
  */
 
