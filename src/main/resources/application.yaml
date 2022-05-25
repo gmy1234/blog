@@ -1,0 +1,26 @@
+# Tomcat
+server:
+  port: 8000
+  servlet:
+    session:
+      cookie:
+        timeout: 21600
+
+spring:
+  profiles:
+    # 环境 dev|test|prod
+    active: dev
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: true
+
+
+
+#mybatis
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
