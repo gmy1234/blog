@@ -5,6 +5,7 @@ server:
     session:
       cookie:
         timeout: 21600
+    context-path: /api
 
 spring:
   profiles:
