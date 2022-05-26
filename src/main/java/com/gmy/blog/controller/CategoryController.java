@@ -7,16 +7,16 @@ import com.gmy.blog.dto.CategoryOptionDTO;
 
 import com.gmy.blog.entity.CategoryEntity;
 import com.gmy.blog.service.CategoryService;
+import com.gmy.blog.vo.CategoryVO;
 import com.gmy.blog.vo.ConditionVO;
+import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +51,9 @@ public class CategoryController {
      */
     @ApiOperation("查看后台分类列表")
     @GetMapping("/getAll")
-    public List<CategoryEntity> getAllCategory() {
-        return categoryService.getAllCategory();
+    public Result<PageResult<CategoryBackDTO>> getAllCategory(ConditionVO condition) {
+
+          return Result.ok(categoryService.getAllCategory(condition));
     }
 
     /**
@@ -60,7 +61,32 @@ public class CategoryController {
      */
     @ApiOperation("搜索文章分类")
     @GetMapping("/search")
-    public List<CategoryOptionDTO> searchArticleCategory() {
-        return categoryService.searchArticleCategory(new ConditionVO());
+    public Result<List<CategoryOptionDTO>> searchArticleCategory(ConditionVO condition) {
+
+        List<CategoryOptionDTO> category = categoryService.searchArticleCategory(condition);
+        return Result.ok(category);
+    }
+
+
+    /**
+     * 添加或者修改分类
+     * @return
+     */
+    @ApiOperation("添加或修改分类")
+    @GetMapping("/saveAndUpdateCategory")
+    public Result<?> saveAndUpdateCategory(@RequestBody CategoryVO categoryVO) {
+        categoryService.saveAndUpdateCategory(categoryVO);
+        return Result.ok();
+    }
+
+    /**
+     * 添加或者修改分类
+     * @return
+     */
+    @ApiOperation("删除分类")
+    @DeleteMapping ("/deletedCategory")
+    public Result<?> deletedCategory(@RequestBody List<Integer> categoryIdList) {
+        categoryService.deletedCategory(categoryIdList);
+        return Result.ok();
     }
 }

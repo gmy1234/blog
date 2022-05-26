@@ -3,5 +3,18 @@
 <mapper namespace="com.gmy.blog.dao.CategoryDao">
 
 
+    <select id="listCategoryBackDTO" resultType="com.gmy.blog.dto.CategoryBackDTO">
+        select c.id, c.category_name, COUNT(a.id) AS article_count
+        FROM tb_category c
+                 LEFT JOIN tb_article a on c.id = a.category_id
+        <where>
+            <if test="condition.keywords != null">
+                category_name like concat('%', #{condition.keywords}, '%')
+            </if>
+        </where>
+        GROUP BY c.id
+        ORDER BY c.id desc
+        LIMIT #{currentPage}, #{pageSize};
+    </select>
 </mapper>
 
