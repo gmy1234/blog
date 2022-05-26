@@ -28,10 +28,10 @@ import java.util.List;
  * @description: 分类API
  * @date 2022/5/24 22:00
  */
-
+@CrossOrigin
 @Api(tags = "分类模块")
 @RestController
-@RequestMapping("/article/category")
+@RequestMapping("/admin/article/category")
 public class CategoryController {
 
     @Autowired
@@ -80,13 +80,13 @@ public class CategoryController {
     }
 
     /**
-     * 添加或者修改分类
+     * 删除分类
      * @return
      */
     @ApiOperation("删除分类")
-    @DeleteMapping ("/deletedCategory")
-    public Result<?> deletedCategory(@RequestBody List<Integer> categoryIdList) {
-        categoryService.deletedCategory(categoryIdList);
+    @PostMapping ("/deleted/{id}")
+    public Result<?> deletedCategory(@PathVariable("id") Integer id) {
+        categoryService.deletedCategory(id);
         return Result.ok();
     }
 }

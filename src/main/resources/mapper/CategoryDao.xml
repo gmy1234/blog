@@ -4,7 +4,7 @@
 
 
     <select id="listCategoryBackDTO" resultType="com.gmy.blog.dto.CategoryBackDTO">
-        select c.id, c.category_name, COUNT(a.id) AS article_count
+        select c.id, c.category_name, COUNT(a.id) AS article_count, c.create_time
         FROM tb_category c
                  LEFT JOIN tb_article a on c.id = a.category_id
         <where>

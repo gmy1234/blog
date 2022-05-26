@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gmy.blog.dto.CategoryBackDTO;
 import com.gmy.blog.entity.CategoryEntity;
 import com.gmy.blog.vo.ConditionVO;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

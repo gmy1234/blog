@@ -90,7 +90,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     @Override
-    public void deletedCategory(List<Integer> categoryIdList) {
+    public void deletedCategoryBatch(List<Integer> categoryIdList) {
         // 查询分类id下是否有文章
         Long articleCount = articleDao.selectCount(new LambdaQueryWrapper<ArticleEntity>()
                 .in(ArticleEntity::getId, categoryIdList));
@@ -98,6 +98,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             throw new BizException("删除失败， 该分类下边有文章");
         }
         categoryDao.deleteBatchIds(categoryIdList);
+    }
+
+    @Override
+    public void deletedCategory(Integer id) {
+        this.baseMapper.deleteById(id);
     }
 
 

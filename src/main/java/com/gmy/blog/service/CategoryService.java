@@ -44,5 +44,7 @@ public interface CategoryService extends IService<CategoryEntity> {
      * 删除 分类
      * @param categoryIdList 分类的ID集合
      */
-    void deletedCategory(List<Integer> categoryIdList);
+    void deletedCategoryBatch(List<Integer> categoryIdList);
+
+    void deletedCategory(Integer id);
 }
