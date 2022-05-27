@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author gmydl
@@ -73,8 +75,9 @@ public class CategoryController {
      * @return
      */
     @ApiOperation("添加或修改分类")
-    @GetMapping("/saveAndUpdateCategory")
+    @PostMapping("/saveAndUpdateCategory")
     public Result<?> saveAndUpdateCategory(@RequestBody CategoryVO categoryVO) {
+        System.out.println(categoryVO);
         categoryService.saveAndUpdateCategory(categoryVO);
         return Result.ok();
     }
@@ -87,6 +90,19 @@ public class CategoryController {
     @PostMapping ("/deleted/{id}")
     public Result<?> deletedCategory(@PathVariable("id") Integer id) {
         categoryService.deletedCategory(id);
+        return Result.ok();
+    }
+
+    /**
+     * 批量删除分类
+     * @return
+     */
+    @ApiOperation("批量删除分类")
+    @DeleteMapping ("/deleteBatch")
+    public Result<?> deletedCategory(@RequestBody String ids) {
+        // TODO
+        System.out.println(ids);
+        //categoryService.deletedCategoryBatch(ids);
         return Result.ok();
     }
 }
