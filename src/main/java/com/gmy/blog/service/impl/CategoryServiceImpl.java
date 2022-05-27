@@ -53,7 +53,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             }
 
             // 分页查询 分类列表
-            List<CategoryBackDTO> categoryList = categoryDao.listCategoryBackDTO(PageUtils.getCurrent() - 1 , PageUtils.getSize(), condition);
+            List<CategoryBackDTO> categoryList = categoryDao.listCategoryBackDTO(PageUtils.getLimitCurrent() , PageUtils.getSize(), condition);
             return new PageResult<>(categoryList, Math.toIntExact(categoryCount));
         }else {
             return new PageResult<>();
