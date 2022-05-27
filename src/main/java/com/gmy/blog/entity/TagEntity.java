@@ -8,21 +8,19 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
 /**
  * @author gmydl
- * @title: ArticleTag
- * @projectName blog-api
- * @description: 文章标签关联表
- * @date 2022/5/2421:39
+ * @title: TagEntity
+ * @projectName blog
+ * @description: 标签表
+ * @date 2022/5/27 12:16
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("tb_article_tag")
-public class ArticleTagEntity {
-
+@TableName("tb_tag")
+public class TagEntity {
     /**
      * id
      */
@@ -30,13 +28,20 @@ public class ArticleTagEntity {
     private Integer id;
 
     /**
-     * 文章id
+     * 标签名
      */
-    private Integer articleId;
+    private String tagName;
 
     /**
-     * 标签id
+     * 创建时间
      */
-    private Integer tagId;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+    /**
+     * 修改时间
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
 
 }

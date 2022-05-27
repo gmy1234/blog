@@ -99,7 +99,7 @@ public class CategoryController {
      */
     @ApiOperation("批量删除分类")
     @DeleteMapping ("/deleteBatch")
-    public Result<?> deletedCategory(@RequestBody String ids) {
+    public Result<?> deletedCategory(@RequestBody List<Integer> ids) {
         // TODO
         System.out.println(ids);
         //categoryService.deletedCategoryBatch(ids);
