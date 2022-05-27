@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * @author gmydl
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @description: 配置项
  * @date 2022/5/26 13:56
  */
+@EnableTransactionManagement
 @Configuration
 public class MybatisPlusConfig {
 

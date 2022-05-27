@@ -1,5 +1,6 @@
 package com.gmy.blog.config;
 
+import com.gmy.blog.handler.PageableHandlerInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -24,10 +25,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 //                .allowedMethods("*");
 //    }
 
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(new PageableHandlerInterceptor());
-//        registry.addInterceptor(getWebSecurityHandler());
-//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new PageableHandlerInterceptor());
+        //registry.addInterceptor(getWebSecurityHandler());
+    }
 
 }
