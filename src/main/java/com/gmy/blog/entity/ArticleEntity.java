@@ -49,6 +49,7 @@ public class ArticleEntity {
 
     /**
      * 文章类型
+     * 1原创 2转载 3翻译
      */
     private Integer type;
 
@@ -59,16 +60,18 @@ public class ArticleEntity {
 
     /**
      * 是否置顶
+     * 0否  1是
      */
     private Integer isTop;
 
     /**
      * 是否删除
+     * 0没删除  1已经删除
      */
     private Integer isDelete;
 
     /**
-     * 文章状态 1.公开 2.私密 3.评论可见
+     * 文章状态 1.公开 2.私密 3.草稿
      */
     private Integer status;
 
@@ -81,7 +84,7 @@ public class ArticleEntity {
     /**
      * 修改时间
      */
-    @TableField(fill = FieldFill.UPDATE)
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
 }

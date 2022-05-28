@@ -1,6 +1,9 @@
 package com.gmy.blog.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,0 +1,89 @@
+package com.gmy.blog.vo;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+
+/**
+ * @author gmydl
+ * @title: ArticleVo
+ * @projectName blog
+ * @description: 文章vo
+ * @date 2022/5/28 12:12
+ */
+
+@ApiModel(description = "文章")
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ArticleVo {
+
+    /**
+     * 文章id
+     */
+    @ApiModelProperty(name = "id", value = "文章id", dataType = "Integer")
+    private Integer id;
+
+    /**
+     * 标题
+     */
+    @NotBlank(message = "文章标题不能为空")
+    @ApiModelProperty(name = "articleTitle", value = "文章标题", required = true, dataType = "String")
+    private String articleTitle;
+
+    /**
+     * 内容
+     */
+    @NotBlank(message = "文章内容不能为空")
+    @ApiModelProperty(name = "articleContent", value = "文章内容", required = true, dataType = "String")
+    private String articleContent;
+
+    /**
+     * 文章封面
+     */
+    @ApiModelProperty(name = "articleCover", value = "文章缩略图", dataType = "String")
+    private String articleCover;
+
+
+    /**
+     * 文章分类
+     */
+    @ApiModelProperty(name = "category", value = "文章分类", dataType = "String")
+    private String  categoryName;
+
+    /**
+     * 文章标签
+     */
+    @ApiModelProperty(name = "tagNameList", value = "文章标签", dataType = "List<String>")
+    private List<String> tagNameList;
+
+    /**
+     * 文章类型
+     * 1原创 2转载 3翻译
+     */
+    @ApiModelProperty(name = "type", value = "文章类型", dataType = "Integer")
+    private Integer type;
+
+    /**
+     * 原文链接
+     */
+    @ApiModelProperty(name = "originalUrl", value = "原文链接", dataType = "String")
+    private String originalUrl;
+
+    /**
+     * 文章状态 1.公开 2.私密 3.草稿
+     */
+    @ApiModelProperty(name = "status", value = "文章状态", dataType = "Integer")
+    private Integer status;
+
+
+
+}
