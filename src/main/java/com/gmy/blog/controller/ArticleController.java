@@ -49,8 +49,8 @@ public class ArticleController {
     }
 
     @ApiOperation(value = "通过 ID 获取后台文章详情")
-    @GetMapping("/getArticle/{articleId}}")
-    public Result<ArticleVo> getArticleById(@RequestParam("articleId") Integer articleId){
+    @GetMapping("/getArticle/{articleId}")
+    public Result<ArticleVo> getArticleById(@PathVariable("articleId") Integer articleId){
         ArticleVo res = articleService.getArticleById(articleId);
         return  Result.ok(res);
     }

@@ -178,8 +178,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         if (article != null) {
             ArticleVo responseArticle = BeanCopyUtils.copyObject(article, ArticleVo.class);
             // 查询文章对应的多个标签的 ID
-            List<ArticleTagEntity> tagIds = articleTagDao.selectList(new LambdaQueryWrapper<ArticleTagEntity>()
-                    .eq(ArticleTagEntity::getArticleId, article));
+            List<ArticleTagEntity> tagReflect = articleTagDao.selectList(new LambdaQueryWrapper<ArticleTagEntity>()
+                    .eq(ArticleTagEntity::getArticleId, articleId));
+            // 得到标签 ID 集合
+            List<Integer> tagIds = tagReflect.stream()
+                    .map(ArticleTagEntity::getTagId)
+                    .collect(Collectors.toList());
             // 如果绑定了标签：校验文章是否绑定了一个或者多个 标签
             if (CollectionUtil.isNotEmpty(tagIds)){
                 // 查关联表中的数据，得到多个标签实体
@@ -191,6 +195,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                         .collect(Collectors.toList());
                 // 设置标签名
                 responseArticle.setTagNameList(tagNameList);
+            }
+            // 获取分类名：
+            CategoryEntity category = categoryDao.selectOne(new LambdaQueryWrapper<CategoryEntity>()
+                    .eq(CategoryEntity::getId, article.getCategoryId()));
+            if (category != null) {
+                responseArticle.setCategoryName(category.getCategoryName());
             }
             return responseArticle;
         }else {
