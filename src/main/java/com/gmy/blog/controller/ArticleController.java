@@ -1,12 +1,14 @@
 package com.gmy.blog.controller;
 
+import com.gmy.blog.dto.ArticleBackDTO;
 import com.gmy.blog.service.ArticleService;
 import com.gmy.blog.vo.ArticleVo;
+import com.gmy.blog.vo.ConditionVO;
+import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -37,5 +39,12 @@ public class ArticleController {
     public Result<?> publish(@RequestBody ArticleVo articleVo){
         articleService.publish(articleVo);
         return  Result.ok();
+    }
+
+    @ApiOperation(value = "后台查询所有文章")
+    @GetMapping("/getAll")
+    public Result<PageResult<ArticleBackDTO>> getAllArticle(ConditionVO conditionVO){
+        PageResult<ArticleBackDTO> data = articleService.getAllArticles(conditionVO);
+        return  Result.ok(data);
     }
 }

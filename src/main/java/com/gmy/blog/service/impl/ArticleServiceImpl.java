@@ -2,12 +2,14 @@ package com.gmy.blog.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.gmy.blog.dao.ArticleDao;
 import com.gmy.blog.dao.ArticleTagDao;
 import com.gmy.blog.dao.CategoryDao;
 import com.gmy.blog.dao.TagDao;
+import com.gmy.blog.dto.ArticleBackDTO;
 import com.gmy.blog.entity.ArticleEntity;
 import com.gmy.blog.entity.ArticleTagEntity;
 import com.gmy.blog.entity.CategoryEntity;
@@ -17,11 +19,11 @@ import com.gmy.blog.service.ArticleTagService;
 import com.gmy.blog.service.CategoryService;
 import com.gmy.blog.service.TagService;
 import com.gmy.blog.util.BeanCopyUtils;
-import com.gmy.blog.vo.ArticleVo;
-import com.gmy.blog.vo.CategoryVO;
+import com.gmy.blog.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -62,9 +64,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     @Override
     public void publish(ArticleVo articleVo) {
-        // 保存文章的分类
+        // 获取文章的分类
         CategoryEntity category = this.saveCategory(articleVo);
         // 保存或者修改文章
+        // TODO: 校验数据
         ArticleEntity articleEntity = BeanCopyUtils.copyObject(articleVo, ArticleEntity.class);
         if (Objects.nonNull(category)){
             articleEntity.setCategoryId(category.getId());
@@ -72,9 +75,28 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         // TODO 设置文章作者
         articleEntity.setUserId(528);
         this.saveOrUpdate(articleEntity);
+        // 保存文章的新标签
+        this.saveArticleTag(articleVo, articleEntity.getId());
+    }
 
-        // 保存文章的标签
-        this.saveOrUpdateArticleTag(articleVo, articleEntity.getId());
+    @Override
+    public PageResult<ArticleBackDTO> getAllArticles(ConditionVO condition) {
+        // 查文章总量
+        Integer count = articleDao.getCountArticle(condition);
+        if (count == 0){
+            return new PageResult<>();
+        }
+
+        // 查询后台文章
+        List<ArticleBackDTO> articleBackDTOList = articleDao
+                .getListArticle(PageUtils.getLimitCurrent(), PageUtils.getSize(), condition);
+        // TODO：文章的点赞数量和收藏数量
+        articleBackDTOList.forEach( item ->{
+            item.setLikeCount(0);
+            item.setViewsCount(0);
+        });
+
+        return new PageResult<>(articleBackDTOList, count);
     }
 
     /**
@@ -96,11 +118,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     }
 
     /**
-     *
+     * 保存创建文章时，新添加的文章标签
      * @param articleVo 获取标签
      * @param articleId 文章 Id
      */
-    private void saveOrUpdateArticleTag(ArticleVo articleVo, Integer articleId) {
+    private void saveArticleTag(ArticleVo articleVo, Integer articleId) {
         // TODO: 编辑文章时的情况
         // 编辑文章则删除文章所有标签
 //        if (Objects.nonNull(articleVo.getId())) {

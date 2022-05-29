@@ -39,15 +39,6 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping("/test")
-    public List<String> test() {
-        ArrayList<String> data = new ArrayList<>();
-        data.add("gmy");
-
-
-        return data;
-    }
-
     /**
      * @return
      */
