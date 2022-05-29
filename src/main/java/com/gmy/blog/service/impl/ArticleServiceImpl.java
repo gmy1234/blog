@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.gmy.blog.constant.CommonConst.FALSE;
+import static com.gmy.blog.constant.CommonConst.TRUE;
 import static com.gmy.blog.enums.ArticleStatusEnum.DRAFT;
 
 /**
@@ -70,7 +72,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         // 保存或者修改文章
         // TODO: 校验数据
         ArticleEntity articleEntity = BeanCopyUtils.copyObject(articleVo, ArticleEntity.class);
-        if (Objects.nonNull(category)){
+        if (Objects.nonNull(category)) {
             articleEntity.setCategoryId(category.getId());
         }
         // TODO 设置文章作者
@@ -82,6 +84,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     /**
      * 保存文章分类
+     *
      * @param articleVo 发布文章时提交的数据
      */
     private CategoryEntity saveCategory(ArticleVo articleVo) {
@@ -90,7 +93,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         CategoryEntity category = categoryDao.selectOne(new LambdaQueryWrapper<CategoryEntity>()
                 .eq(CategoryEntity::getCategoryName, categoryName));
         // 通过分类名 判断实体是否不存在，并且 文章状态不为草稿
-        if (Objects.isNull(category) && !articleVo.getStatus().equals(DRAFT.getStatus())){
+        if (Objects.isNull(category) && !articleVo.getStatus().equals(DRAFT.getStatus())) {
             category = CategoryEntity.builder()
                     .categoryName(categoryName).build();
             categoryDao.insert(category);
@@ -100,6 +103,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     /**
      * 保存创建文章时，新添加的文章标签
+     *
      * @param articleVo 获取标签
      * @param articleId 文章 Id
      */
@@ -114,7 +118,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         // 获取发布文章时选择的标签， 其中包含用户自己添加的
         List<String> tagNameList = articleVo.getTagNameList();
         // 添加文章标签
-        if (CollectionUtil.isNotEmpty(tagNameList)){
+        if (CollectionUtil.isNotEmpty(tagNameList)) {
             // 有可能会有用户自己添加的标签，所以查寻数据库中已经存在的标签。
             List<TagEntity> existedTags = tagDao.selectList(new LambdaQueryWrapper<TagEntity>()
                     .in(TagEntity::getTagName, tagNameList));
@@ -129,7 +133,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             // 过滤，挑选出用户自己添加的标签
             tagNameList.removeAll(existedTagName);
             // 校验过滤后的标签
-            if (CollectionUtil.isNotEmpty(tagNameList)){
+            if (CollectionUtil.isNotEmpty(tagNameList)) {
                 // 转换并保存
                 List<TagEntity> tagList = tagNameList.stream().map(item -> {
                     TagEntity tagEntity = new TagEntity();
@@ -153,7 +157,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     public PageResult<ArticleBackDTO> getAllArticles(ConditionVO condition) {
         // 查文章总量
         Integer count = articleDao.getCountArticle(condition);
-        if (count == 0){
+        if (count == 0) {
             return new PageResult<>();
         }
 
@@ -161,7 +165,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         List<ArticleBackDTO> articleBackDTOList = articleDao
                 .getListArticle(PageUtils.getLimitCurrent(), PageUtils.getSize(), condition);
         // TODO：文章的点赞数量和收藏数量
-        articleBackDTOList.forEach( item ->{
+        articleBackDTOList.forEach(item -> {
             item.setLikeCount(0);
             item.setViewsCount(0);
         });
@@ -185,7 +189,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                     .map(ArticleTagEntity::getTagId)
                     .collect(Collectors.toList());
             // 如果绑定了标签：校验文章是否绑定了一个或者多个 标签
-            if (CollectionUtil.isNotEmpty(tagIds)){
+            if (CollectionUtil.isNotEmpty(tagIds)) {
                 // 查关联表中的数据，得到多个标签实体
                 List<TagEntity> tags = tagDao.selectList(new LambdaQueryWrapper<TagEntity>()
                         .in(TagEntity::getId, tagIds));
@@ -203,9 +207,21 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 responseArticle.setCategoryName(category.getCategoryName());
             }
             return responseArticle;
-        }else {
+        } else {
             throw new BizException("文章 ID 不存在");
         }
 
+    }
+
+    @Override
+    public void deleteArticleById(DeleteVo deleteVo) {
+        List<ArticleEntity> articleEntityList =deleteVo.getIdList().stream()
+                .map(id -> ArticleEntity.builder()
+                        .id(id)
+                        .isTop(FALSE)
+                        .isDelete(deleteVo.getIsDelete())
+                        .build())
+                .collect(Collectors.toList());
+        this.updateBatchById(articleEntityList);
     }
 }

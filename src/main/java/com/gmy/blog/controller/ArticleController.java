@@ -2,14 +2,14 @@ package com.gmy.blog.controller;
 
 import com.gmy.blog.dto.ArticleBackDTO;
 import com.gmy.blog.service.ArticleService;
-import com.gmy.blog.vo.ArticleVo;
-import com.gmy.blog.vo.ConditionVO;
-import com.gmy.blog.vo.PageResult;
-import com.gmy.blog.vo.Result;
+import com.gmy.blog.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author gmydl
@@ -53,5 +53,12 @@ public class ArticleController {
     public Result<ArticleVo> getArticleById(@PathVariable("articleId") Integer articleId){
         ArticleVo res = articleService.getArticleById(articleId);
         return  Result.ok(res);
+    }
+
+    @ApiOperation(value = "删除后台文章,逻辑删除")
+    @PostMapping("/deleteArticles")
+    public Result<?> deleteArticleById(@RequestBody DeleteVo deleteVO){
+        articleService.deleteArticleById(deleteVO);
+        return  Result.ok();
     }
 }
