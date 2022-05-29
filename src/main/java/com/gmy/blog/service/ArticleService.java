@@ -29,4 +29,11 @@ public interface ArticleService extends IService<ArticleEntity> {
      * @return 文章列表
      */
     PageResult<ArticleBackDTO> getAllArticles(ConditionVO conditionVO);
+
+    /**
+     * 通过 ID 获取后台文章详情
+     * @param articleId 文章 ID
+     * @return 文章
+     */
+    ArticleVo getArticleById(Integer articleId);
 }

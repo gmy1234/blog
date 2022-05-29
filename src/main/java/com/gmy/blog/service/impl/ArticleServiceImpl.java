@@ -14,6 +14,7 @@ import com.gmy.blog.entity.ArticleEntity;
 import com.gmy.blog.entity.ArticleTagEntity;
 import com.gmy.blog.entity.CategoryEntity;
 import com.gmy.blog.entity.TagEntity;
+import com.gmy.blog.exception.BizException;
 import com.gmy.blog.service.ArticleService;
 import com.gmy.blog.service.ArticleTagService;
 import com.gmy.blog.service.CategoryService;
@@ -77,26 +78,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         this.saveOrUpdate(articleEntity);
         // 保存文章的新标签
         this.saveArticleTag(articleVo, articleEntity.getId());
-    }
-
-    @Override
-    public PageResult<ArticleBackDTO> getAllArticles(ConditionVO condition) {
-        // 查文章总量
-        Integer count = articleDao.getCountArticle(condition);
-        if (count == 0){
-            return new PageResult<>();
-        }
-
-        // 查询后台文章
-        List<ArticleBackDTO> articleBackDTOList = articleDao
-                .getListArticle(PageUtils.getLimitCurrent(), PageUtils.getSize(), condition);
-        // TODO：文章的点赞数量和收藏数量
-        articleBackDTOList.forEach( item ->{
-            item.setLikeCount(0);
-            item.setViewsCount(0);
-        });
-
-        return new PageResult<>(articleBackDTOList, count);
     }
 
     /**
@@ -166,5 +147,55 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             }).collect(Collectors.toList());
             articleTagService.saveBatch(articleTagEntityList);
         }
+    }
+
+    @Override
+    public PageResult<ArticleBackDTO> getAllArticles(ConditionVO condition) {
+        // 查文章总量
+        Integer count = articleDao.getCountArticle(condition);
+        if (count == 0){
+            return new PageResult<>();
+        }
+
+        // 查询后台文章
+        List<ArticleBackDTO> articleBackDTOList = articleDao
+                .getListArticle(PageUtils.getLimitCurrent(), PageUtils.getSize(), condition);
+        // TODO：文章的点赞数量和收藏数量
+        articleBackDTOList.forEach( item ->{
+            item.setLikeCount(0);
+            item.setViewsCount(0);
+        });
+
+        return new PageResult<>(articleBackDTOList, count);
+    }
+
+    @Override
+    public ArticleVo getArticleById(Integer articleId) {
+        // 获取文章数据
+        ArticleEntity article = articleDao.selectOne(new LambdaQueryWrapper<ArticleEntity>().
+                eq(ArticleEntity::getId, articleId));
+        // 校验
+        if (article != null) {
+            ArticleVo responseArticle = BeanCopyUtils.copyObject(article, ArticleVo.class);
+            // 查询文章对应的多个标签的 ID
+            List<ArticleTagEntity> tagIds = articleTagDao.selectList(new LambdaQueryWrapper<ArticleTagEntity>()
+                    .eq(ArticleTagEntity::getArticleId, article));
+            // 如果绑定了标签：校验文章是否绑定了一个或者多个 标签
+            if (CollectionUtil.isNotEmpty(tagIds)){
+                // 查关联表中的数据，得到多个标签实体
+                List<TagEntity> tags = tagDao.selectList(new LambdaQueryWrapper<TagEntity>()
+                        .in(TagEntity::getId, tagIds));
+                // 得到标签名
+                List<String> tagNameList = tags.stream()
+                        .map(TagEntity::getTagName)
+                        .collect(Collectors.toList());
+                // 设置标签名
+                responseArticle.setTagNameList(tagNameList);
+            }
+            return responseArticle;
+        }else {
+            throw new BizException("文章 ID 不存在");
+        }
+
     }
 }

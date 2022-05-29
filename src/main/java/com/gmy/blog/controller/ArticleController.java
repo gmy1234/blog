@@ -47,4 +47,11 @@ public class ArticleController {
         PageResult<ArticleBackDTO> data = articleService.getAllArticles(conditionVO);
         return  Result.ok(data);
     }
+
+    @ApiOperation(value = "通过 ID 获取后台文章详情")
+    @GetMapping("/getArticle/{articleId}}")
+    public Result<ArticleVo> getArticleById(@RequestParam("articleId") Integer articleId){
+        ArticleVo res = articleService.getArticleById(articleId);
+        return  Result.ok(res);
+    }
 }
