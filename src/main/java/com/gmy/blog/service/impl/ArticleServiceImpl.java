@@ -224,4 +224,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 .collect(Collectors.toList());
         this.updateBatchById(articleEntityList);
     }
+
+    @Override
+    public void updateArticleTop(ArticleTopVo articleTopVO) {
+        // 修改文章置顶状态
+        ArticleEntity top = ArticleEntity.builder()
+                .id(articleTopVO.getId())
+                .isTop(articleTopVO.getIsTop())
+                .build();
+        articleDao.updateById(top);
+    }
 }

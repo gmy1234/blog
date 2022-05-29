@@ -4,10 +4,7 @@ package com.gmy.blog.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gmy.blog.dto.ArticleBackDTO;
 import com.gmy.blog.entity.ArticleEntity;
-import com.gmy.blog.vo.ArticleVo;
-import com.gmy.blog.vo.ConditionVO;
-import com.gmy.blog.vo.DeleteVo;
-import com.gmy.blog.vo.PageResult;
+import com.gmy.blog.vo.*;
 
 import java.util.List;
 
@@ -42,7 +39,13 @@ public interface ArticleService extends IService<ArticleEntity> {
 
     /**
      * 逻辑删除 文章
-     * @param articleIds 文章 ID 集合
+     * @param deleteVo 文章 ID 集合 和 删除标识
      */
     void deleteArticleById(DeleteVo deleteVo);
+
+    /**
+     * 更新置顶状态
+     * @param articleTopVO 请求体
+     */
+    void updateArticleTop(ArticleTopVo articleTopVO);
 }

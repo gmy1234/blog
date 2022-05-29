@@ -9,6 +9,7 @@ import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -60,5 +61,18 @@ public class ArticleController {
     public Result<?> deleteArticleById(@RequestBody DeleteVo deleteVO){
         articleService.deleteArticleById(deleteVO);
         return  Result.ok();
+    }
+
+    /**
+     * 修改文章置顶状态
+     *
+     * @param articleTopVO 文章置顶信息
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "修改文章置顶")
+    @PostMapping("/top")
+    public Result<?> updateArticleTop(@Valid @RequestBody ArticleTopVo articleTopVO) {
+        articleService.updateArticleTop(articleTopVO);
+        return Result.ok();
     }
 }
