@@ -3,6 +3,7 @@ package com.gmy.blog.controller;
 import com.gmy.blog.enums.FilePathEnum;
 import com.gmy.blog.strategy.context.UploadStrategyContext;
 import com.gmy.blog.vo.Result;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @description: TODO
  * @date 2022/5/30 14:15
  */
+@Api("上传文件模块")
 @RestController
 @RequestMapping("/admin/upload/")
 public class UtilController {
@@ -26,7 +28,7 @@ public class UtilController {
     private UploadStrategyContext uploadStrategyContext;
 
     /**
-     * 上传文章图片
+     * 发布文章时，上传文章图片
      *
      * @param file 文件
      * @return {@link Result<String>} 文章图片地址
@@ -36,6 +38,7 @@ public class UtilController {
     @PostMapping("/articles/images")
     public Result<String> uploadArticleImages(MultipartFile file) {
 
-        return Result.ok(uploadStrategyContext.executeUploadStrategy(file, FilePathEnum.ARTICLE.getPath()));
+        return Result.ok(uploadStrategyContext
+                .executeUploadStrategy(file, FilePathEnum.ARTICLE.getPath()));
     }
 }
