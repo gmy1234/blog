@@ -48,4 +48,10 @@ public interface ArticleService extends IService<ArticleEntity> {
      * @param articleTopVO 请求体
      */
     void updateArticleTop(ArticleTopVo articleTopVO);
+
+    /**
+     * 物理删除文章
+     * @param articleIdList 文章ID集合
+     */
+    void phyDeleteArticles(DeleteVo articleIdList);
 }

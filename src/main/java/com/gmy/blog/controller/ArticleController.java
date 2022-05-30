@@ -75,4 +75,18 @@ public class ArticleController {
         articleService.updateArticleTop(articleTopVO);
         return Result.ok();
     }
+
+    /**
+     * 物理删除文章
+     *
+     * @param articleIdList 文章置顶信息
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "修改文章置顶")
+    @PostMapping("/phyDeleteArticles")
+    public Result<?> deleteArticles( @RequestBody DeleteVo articleIdList) {
+
+        articleService.phyDeleteArticles(articleIdList);
+        return Result.ok();
+    }
 }

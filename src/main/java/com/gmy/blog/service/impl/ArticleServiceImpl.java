@@ -23,6 +23,7 @@ import com.gmy.blog.util.BeanCopyUtils;
 import com.gmy.blog.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -233,5 +234,20 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 .isTop(articleTopVO.getIsTop())
                 .build();
         articleDao.updateById(top);
+    }
+
+    /**
+     * 物理删除文章
+     * @param deleteVo 文章ID集合
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void phyDeleteArticles(DeleteVo deleteVo) {
+        List<Integer> articleIdList = deleteVo.getIdList();
+        // 删除文章
+        articleDao.deleteBatchIds(articleIdList);
+        // 删除关联表
+        articleTagDao.delete(new LambdaQueryWrapper<ArticleTagEntity>()
+                .in(ArticleTagEntity::getArticleId, articleIdList));
     }
 }
