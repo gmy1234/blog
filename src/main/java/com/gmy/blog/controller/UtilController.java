@@ -28,7 +28,8 @@ public class UtilController {
     private UploadStrategyContext uploadStrategyContext;
 
     /**
-     * 发布文章时，上传文章图片
+     * 发布文章时，上传文章封面
+     * Markdown 上传图片
      *
      * @param file 文件
      * @return {@link Result<String>} 文章图片地址
