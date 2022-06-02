@@ -12,8 +12,8 @@ import java.util.List;
 /**
  * 用户账号服务
  *
- * @author yezhiqiu
- * @date 2021/07/29
+ * @author Gmy
+ * @date 2022.6.3-00.20
  */
 public interface UserAuthService extends IService<UserAuthEntity> {
 
@@ -24,4 +24,10 @@ public interface UserAuthService extends IService<UserAuthEntity> {
      * @return 用户
      */
     PageResult<UserBackDTO> getAllUsers(ConditionVO condition);
+
+    /**
+     * 用户注册，发送验证码
+     * @param username 用户的邮箱
+     */
+    void sendCode(String username);
 }

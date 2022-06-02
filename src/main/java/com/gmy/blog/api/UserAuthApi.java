@@ -35,8 +35,7 @@ public class UserAuthApi {
     @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String")
     @GetMapping("/user/code")
     public Result<?> sendCode(String username) {
-        System.out.println(username);
-
+        userAuthService.sendCode(username);
         return Result.ok();
     }
 
