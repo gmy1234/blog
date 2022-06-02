@@ -1,7 +1,10 @@
 package com.gmy.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gmy.blog.dto.user.UserRoleDTO;
 import com.gmy.blog.entity.RoleEntity;
+
+import java.util.List;
 
 /**
  * @author gmydl
@@ -12,4 +15,10 @@ import com.gmy.blog.entity.RoleEntity;
  */
 public interface RoleService extends IService<RoleEntity> {
 
+    /**
+     * 获取用户角色选项
+     *
+     * @return 角色
+     */
+    List<UserRoleDTO> listUserRoles();
 }

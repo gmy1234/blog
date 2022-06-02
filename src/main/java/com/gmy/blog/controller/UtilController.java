@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author gmydl
  * @title: UtilController
  * @projectName blog
- * @description: TODO
+ * @description: 上传微博号
  * @date 2022/5/30 14:15
  */
 @Api("上传文件模块")
