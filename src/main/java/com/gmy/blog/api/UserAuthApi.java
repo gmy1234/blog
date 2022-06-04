@@ -3,12 +3,12 @@ package com.gmy.blog.api;
 import com.gmy.blog.annotation.AccessLimit;
 import com.gmy.blog.service.UserAuthService;
 import com.gmy.blog.vo.Result;
+import com.gmy.blog.vo.user.UserVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author gmydl
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api("用户账号模块")
 @RestController
+@RequestMapping("/user")
 public class UserAuthApi {
 
     @Autowired
@@ -33,10 +34,22 @@ public class UserAuthApi {
     @AccessLimit(seconds = 60, maxCount = 1)
     @ApiOperation(value = "发送邮箱验证码")
     @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String")
-    @GetMapping("/user/code")
+    @GetMapping("/code")
     public Result<?> sendCode(String username) {
         userAuthService.sendCode(username);
         return Result.ok();
     }
 
+    /**
+     * 用户注册
+     *
+     * @param userVo 用户注册的信息
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "用户注册")
+    @PostMapping("/register")
+    public Result<?> register(@RequestBody UserVO userVo) {
+        userAuthService.register(userVo);
+        return Result.ok();
+    }
 }

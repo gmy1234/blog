@@ -28,19 +28,19 @@ class BlogApiApplicationTests {
 
     @Test
     void sendEmail() {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setSubject("邮件主题");
-        message.setText("邮件内容:验证码");
-        message.setTo("1544126485@qq.com");
-        message.setFrom("1508594767@qq.com");
-        javaMailSender.send(message);
-        System.out.println("发送成功");
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setSubject("邮件主题");
+//        message.setText("邮件内容:验证码");
+//        message.setTo("1544126485@qq.com");
+//        message.setFrom("1508594767@qq.com");
+//        javaMailSender.send(message);
+//        System.out.println("发送成功");
 
     }
 
     @Test
     void redisTest(){
-        redisService.set("user_code: gmy", 32421,  10 * 60);
+        //redisService.set("user_code: gmy", 32421,  10 * 60);
 
     }
 
