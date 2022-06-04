@@ -52,4 +52,17 @@ public class UserAuthApi {
         userAuthService.register(userVo);
         return Result.ok();
     }
+
+    /**
+     * 用户注册
+     *
+     * @param userVo 用户注册的信息
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "用户登陆")
+    @PostMapping("/login")
+    public Result<?> login(@RequestBody UserVO userVo) {
+
+        return Result.ok();
+    }
 }

@@ -27,13 +27,13 @@ public interface UserAuthService extends IService<UserAuthEntity> {
     PageResult<UserBackDTO> getAllUsers(ConditionVO condition);
 
     /**
-     * 用户注册，发送验证码
+     * 用户发送验证码
      * @param email 用户的邮箱
      */
     void sendCode(String email);
 
     /**
-     * 用户 注册
+     * 用户注册
      * @param userVo 用户的信息
      */
     void register(UserVO userVo);
