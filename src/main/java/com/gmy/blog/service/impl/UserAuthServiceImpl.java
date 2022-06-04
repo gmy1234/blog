@@ -2,7 +2,6 @@ package com.gmy.blog.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.gmy.blog.constant.MQPrefixConst;
 import com.gmy.blog.dao.UserAuthDao;
 import com.gmy.blog.dto.EmailDTO;
 import com.gmy.blog.dto.user.UserBackDTO;
@@ -13,18 +12,17 @@ import com.gmy.blog.util.CommonUtils;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.PageUtils;
-import org.springframework.amqp.AmqpException;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessagePostProcessor;
-import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.mail.internet.MimeMessage;
-import java.security.MessageDigest;
 import java.util.List;
+
+import static com.gmy.blog.constant.MQPrefixConst.EMAIL_EXCHANGE;
+import static com.gmy.blog.constant.MQPrefixConst.EMAIL_ROUTING_KEY;
 
 /**
  * 用户账号服务
@@ -32,6 +30,7 @@ import java.util.List;
  * @author gmy
  * @date 2022/06/01
  */
+@Slf4j
 @Service
 public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity> implements UserAuthService {
 
@@ -64,26 +63,20 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
         }
         // 生产验证码
         String randomCode = CommonUtils.getRandomCode();
+        // 封装实体类
         EmailDTO emailDTO = EmailDTO.builder()
                 .email(username)
                 .subject("验证码")
                 .content("你的验证码为： " + randomCode + ", 有效期为15分钟，请不要透露给别人")
                 .build();
 
-        Message emailMessage = new Message(JSON.toJSONBytes(emailDTO));
         // 使用消息队列，将发送验证码任务放到队列中
-//        rabbitTemplate.convertAndSend(MQPrefixConst.EMAIL_EXCHANGE, "*", emailMessage,
-//                new CorrelationData());
-
-        rabbitTemplate.convertAndSend(MQPrefixConst.EMAIL_EXCHANGE, "mail_routing_key",
-                emailMessage);
+        rabbitTemplate.convertAndSend(EMAIL_EXCHANGE, EMAIL_ROUTING_KEY, emailDTO);
 
 
-
-
+        // 使用 Redis，存放验证码，过期时间为 15分钟
     }
 
 
-    // 使用 Redis，存放验证码，过期时间为 15分钟
 
 }

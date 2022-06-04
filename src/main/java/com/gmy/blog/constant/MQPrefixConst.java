@@ -26,4 +26,9 @@ public class MQPrefixConst {
      */
     public static final String EMAIL_QUEUE = "email_queue";
 
+
+    /**
+     * 邮件交换机和队列的绑定关系
+     */
+    public static final String EMAIL_ROUTING_KEY = "mail_routing_key";
 }
