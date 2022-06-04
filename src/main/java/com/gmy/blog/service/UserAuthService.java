@@ -27,7 +27,7 @@ public interface UserAuthService extends IService<UserAuthEntity> {
 
     /**
      * 用户注册，发送验证码
-     * @param username 用户的邮箱
+     * @param email 用户的邮箱
      */
-    void sendCode(String username);
+    void sendCode(String email);
 }

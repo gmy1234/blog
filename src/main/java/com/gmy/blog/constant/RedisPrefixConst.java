@@ -1,22 +1,25 @@
 package com.gmy.blog.constant;
 
 
+/**
+ * redis 的常量
+ */
 public class RedisPrefixConst {
 
     /**
      * 验证码过期时间
      */
-    public static final long CODE_EXPIRE_TIME = 15 * 60;
+    public static final long CODE_EXPIRE_TIME = 10 * 60;
 
     /**
-     * 验证码
+     * 注册验证码
      */
-    public static final String USER_CODE_KEY = "code:";
+    public static final String REGISTER_VERIFICATION_KEY = "code:";
 
     /**
      * 博客浏览量
      */
-    public static final String BLOG_VIEWS_COUNT = "blog_views_count";
+    public static final String BLOG_V_COUNT = "blog_views_count";
 
     /**
      * 文章浏览量
