@@ -3,6 +3,7 @@ package com.gmy.blog.service.impl;
 import cn.hutool.system.UserInfo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.gmy.blog.dao.MenuDao;
 import com.gmy.blog.dao.RoleDao;
 import com.gmy.blog.dao.UserAuthDao;
 import com.gmy.blog.dao.UserInfoDao;
@@ -53,6 +54,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private MenuDao menuDao;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -68,6 +72,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new BizException("用户名不存在！");
 
         }
+        // 查询用户ID 对应的权限
+
+
 
         // 返回 UserDetails
         return this.convertUserDetail(userEntity, request);
