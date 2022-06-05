@@ -43,4 +43,11 @@ public interface UserAuthService extends IService<UserAuthEntity> {
      * @param userVo 登陆信息
      */
     String  login(UserVO userVo);
+
+    /**
+     * 退出登陆
+     * @return 消息
+     */
+    String  logout();
+
 }

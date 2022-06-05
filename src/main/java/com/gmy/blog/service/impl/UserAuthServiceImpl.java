@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -195,6 +196,19 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
         // 把用户信息存入 Redis， userid 为 key
         redisService.set("login:" + userInfoId, userInfo);
         return token;
+    }
+
+    @Override
+    public String logout() {
+        // 获取 SecurityContextHolder 中用户的ID
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailDTO loginUser = (UserDetailDTO) authentication.getPrincipal();
+
+        // 删除 redis 里的用户数据
+        Integer userInfoId = loginUser.getUserInfoId();
+        redisService.del("login:" + userInfoId);
+
+        return "注销成功";
     }
 
 

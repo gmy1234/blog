@@ -55,7 +55,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         // redis 中获取用户信息
         Object userInfo = redisService.get("login:" + userId);
         if (Objects.isNull(userInfo)){
-            throw new BindException("UserID 非法 或 用户未登陆");
+            throw new BindException(" 用户未登陆");
         }
 
         // 存入 SecurityContextHolder

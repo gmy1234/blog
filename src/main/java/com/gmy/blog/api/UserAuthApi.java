@@ -71,4 +71,10 @@ public class UserAuthApi {
 
         return Result.ok("hello");
     }
+
+    @GetMapping("/logout")
+    public Result<String > logout() {
+
+        return Result.ok(userAuthService.logout());
+    }
 }
