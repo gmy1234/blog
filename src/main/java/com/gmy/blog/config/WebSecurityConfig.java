@@ -2,6 +2,8 @@ package com.gmy.blog.config;
 
 
 import com.gmy.blog.filter.JwtAuthenticationTokenFilter;
+import com.gmy.blog.handler.AccessDeniedHandlerImpl;
+import com.gmy.blog.handler.AuthenticationEntryPointImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +48,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
+    @Autowired
+    private AuthenticationEntryPointImpl authenticationEntryPoint;
+
+    @Autowired
+    private AccessDeniedHandlerImpl accessDeniedHandler;
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception{
@@ -71,6 +79,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 添加过滤器，在指定的过滤器之前添加。p1: 过滤器，p2: 指定过滤器的字节码。
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
+
+        // 配置异常处理器
+        http    // 未登陆处理（认证失败处理）
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+                // 权限不足处理（授权失败处理）
+                .accessDeniedHandler(accessDeniedHandler);
     }
 
 
