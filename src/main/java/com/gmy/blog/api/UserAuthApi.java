@@ -65,4 +65,10 @@ public class UserAuthApi {
         String token = userAuthService.login(userVo);
         return Result.ok(token);
     }
+
+    @GetMapping("/hello")
+    public Result<String> hello() {
+
+        return Result.ok("hello");
+    }
 }

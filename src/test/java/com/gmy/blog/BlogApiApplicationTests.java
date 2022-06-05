@@ -1,6 +1,8 @@
 package com.gmy.blog;
 
+import cn.hutool.json.JSONObject;
 import cn.hutool.jwt.JWT;
+import cn.hutool.jwt.JWTPayload;
 import cn.hutool.jwt.JWTUtil;
 import cn.hutool.jwt.signers.JWTSignerUtil;
 import com.alibaba.fastjson.JSON;
@@ -73,5 +75,17 @@ class BlogApiApplicationTests {
         System.out.println(token3);
 
         // 总结 key 是定义 尾部的验证信息， payload 是定义中间的有效信息，head定义信息头。
+
+        // 解析
+        JWT jwt = new JWT();
+        JWT parse = jwt.parse(token3);
+        JWTPayload userInfo = parse.getPayload();
+        System.out.println(userInfo);
+        System.out.println(userInfo.getClaim("userId"));
+        JSONObject claimsJson = userInfo.getClaimsJson();
+        System.out.println(claimsJson);
+        System.out.println(claimsJson.get("userId"));
+
+
     }
 }
