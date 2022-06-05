@@ -1,6 +1,8 @@
 package com.gmy.blog.service.impl;
 
 import cn.hutool.crypto.digest.BCrypt;
+import cn.hutool.jwt.JWT;
+import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -24,15 +26,24 @@ import com.gmy.blog.util.CommonUtils;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.PageUtils;
+import com.gmy.blog.vo.user.UserDetailDTO;
 import com.gmy.blog.vo.user.UserVO;
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.catalina.Manager;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.gmy.blog.constant.CommonConst.DEFAULT_NICKNAME;
@@ -65,6 +76,9 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Override
     public PageResult<UserBackDTO> getAllUsers(ConditionVO condition) {
@@ -152,10 +166,35 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
         UserAuthEntity userAuth = UserAuthEntity.builder()
                 .userInfoId(userInfo.getId())
                 .username(userVo.getUsername())
-                .password(BCrypt.hashpw(userVo.getPassword()))
+                .password(BCrypt.hashpw(userVo.getPassword())) // 使用盐值加密
                 .loginType(LoginTypeEnum.EMAIL.getType())
                 .build();
         userAuthDao.insert(userAuth);
+    }
+
+
+    @Override
+    public String login(UserVO userVo) {
+        log.info("执行了 login 方法：");
+        // AuthenticationManager 进行用户认证
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(userVo.getUsername(), userVo.getPassword());
+        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+        // 认证没有通过，抛出异常
+        if (Objects.isNull(authenticate)){
+            throw new BizException("认证失败");
+        }
+        // 认证通过，通过 UserID 生成 JWT，
+        UserDetailDTO userInfo = (UserDetailDTO) authenticate.getPrincipal();
+        Integer userInfoId = userInfo.getUserInfoId();
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("userId", userInfoId.toString());
+        // 生产 Token
+        String token = JWTUtil.createToken(payload, "token".getBytes(StandardCharsets.UTF_8));
+
+        // 把用户信息存入 Redis， userid 为 key
+        redisService.set("login:" + userInfoId, userInfo);
+        return token;
     }
 
 

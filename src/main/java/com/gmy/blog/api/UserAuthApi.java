@@ -56,13 +56,13 @@ public class UserAuthApi {
     /**
      * 用户注册
      *
-     * @param userVo 用户注册的信息
+     * @param userVo 用户登陆信息
      * @return {@link Result<>}
      */
     @ApiOperation(value = "用户登陆")
     @PostMapping("/login")
-    public Result<?> login(@RequestBody UserVO userVo) {
-
-        return Result.ok();
+    public Result<String> login(@RequestBody UserVO userVo) {
+        String token = userAuthService.login(userVo);
+        return Result.ok(token);
     }
 }

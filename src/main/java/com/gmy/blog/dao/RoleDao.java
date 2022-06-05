@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gmy.blog.entity.RoleEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 /**
  * @author gmydl
@@ -15,4 +17,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RoleDao extends BaseMapper<RoleEntity> {
 
+    /**
+     * 根据用户id获取角色列表
+     *
+     * @param userInfoId 用户id
+     * @return 角色标签
+     */
+    List<String> listRolesByUserInfoId(Integer userInfoId);
 }

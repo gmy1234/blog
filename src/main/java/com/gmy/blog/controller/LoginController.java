@@ -19,7 +19,7 @@ import java.util.List;
 @CrossOrigin
 @Api("登陆管理")
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/admin/user")
 public class LoginController {
 
     @GetMapping("/info")

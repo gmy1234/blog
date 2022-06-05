@@ -1,9 +1,12 @@
 package com.gmy.blog.vo.user;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.gmy.blog.constant.CommonConst;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -122,7 +125,10 @@ public class UserDetailDTO implements UserDetails {
 
     /**
      * 最近登录时间
+     * 默认情况下Java 8不支持LocalDateTime 序列化，添加依赖。
      */
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime lastLoginTime;
 
 

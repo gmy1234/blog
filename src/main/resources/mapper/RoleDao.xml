@@ -3,4 +3,11 @@
 <mapper namespace="com.gmy.blog.dao.RoleDao">
 
 
+    <select id="listRolesByUserInfoId" resultType="java.lang.String">
+        SELECT role_label
+        FROM tb_role r,
+             tb_user_role ur
+        WHERE r.id = ur.role_id
+          AND ur.user_id = #{userInfoId}
+    </select>
 </mapper>
