@@ -23,10 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static com.gmy.blog.constant.RedisPrefixConst.*;
 import static com.gmy.blog.enums.ZoneEnum.SHANGHAI;
@@ -71,13 +68,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new BizException("用户名不存在！");
 
         }
-        return this.convertUserDetail(userEntity, request);
 
         // 返回 UserDetails
-
-
-        // TODO：查询对应的权限信息
-
+        return this.convertUserDetail(userEntity, request);
     }
 
     /**
@@ -90,7 +83,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UserDetailDTO convertUserDetail(UserAuthEntity userEntity, HttpServletRequest request) {
         // 查询账号信息
         UserInfoEntity userInfo = userInfoDao.selectById(userEntity.getUserInfoId());
-        // 查询账号角色
+        // 查询账号角色       查询对应的权限信息
         List<String> roleList = roleDao.listRolesByUserInfoId(userInfo.getId());
         // 查询账号点赞信息
         // Set<Object> articleLikeSet = redisService.sMembers(ARTICLE_USER_LIKE + userInfo.getId());

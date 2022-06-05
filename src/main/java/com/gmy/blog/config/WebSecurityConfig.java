@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
@@ -28,6 +29,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
@@ -56,11 +58,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 // 关闭csrf
                 .csrf().disable()
-                // 不通过 Session获取 SecurityContext
+                // 不通过 Session 获取 SecurityContext，前后端分离，session基本不用
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                // 请求认证：
                 .authorizeRequests()
-                .antMatchers("/user/login").anonymous()
+                .antMatchers("/user/login").anonymous() // anonymous() 匿名状态可访问，已经登陆状态不能访问。
+                .antMatchers("/user/code").permitAll() // permitAll() 无论是否登陆，都可以访问。
                 .anyRequest().authenticated();
 
 
