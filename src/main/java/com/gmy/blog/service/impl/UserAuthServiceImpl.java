@@ -13,6 +13,7 @@ import com.gmy.blog.dao.UserInfoDao;
 import com.gmy.blog.dao.UserRoleDao;
 import com.gmy.blog.dto.EmailDTO;
 import com.gmy.blog.dto.user.UserBackDTO;
+import com.gmy.blog.dto.user.UserInfoDTO;
 import com.gmy.blog.dto.user.UserRoleDTO;
 import com.gmy.blog.entity.UserAuthEntity;
 import com.gmy.blog.entity.UserInfoEntity;
@@ -22,7 +23,9 @@ import com.gmy.blog.enums.RoleEnum;
 import com.gmy.blog.exception.BizException;
 import com.gmy.blog.service.RedisService;
 import com.gmy.blog.service.UserAuthService;
+import com.gmy.blog.util.BeanCopyUtils;
 import com.gmy.blog.util.CommonUtils;
+import com.gmy.blog.util.UserUtils;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.PageUtils;
@@ -35,6 +38,7 @@ import org.apache.catalina.Manager;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,6 +46,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -73,7 +78,7 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
     @Autowired
     private UserRoleDao userRoleDao;
 
-    @Autowired
+    @Resource
     private RabbitTemplate rabbitTemplate;
 
     @Autowired
@@ -176,7 +181,7 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
 
 
     @Override
-    public String login(UserLoginVo userVo) {
+    public UserInfoDTO login(UserLoginVo userVo) {
         log.info("执行了 login 方法：");
         // AuthenticationManager 进行用户认证
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -186,17 +191,41 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
         if (Objects.isNull(authenticate)){
             throw new BizException("认证失败");
         }
-        // 认证通过，通过 UserID 生成 JWT，
+        // 认证通过。
+        // 获取认证后返回的数据（我们自定义的UserDetailServiceImpl实现类中的 loadUserByUsername（）方法）
+        // userInfo 就是这个方法的返回类。
         UserDetailDTO userInfo = (UserDetailDTO) authenticate.getPrincipal();
+        // 获取userId
         Integer userInfoId = userInfo.getUserInfoId();
+        // 放到信息载荷中
         Map<String, Object> payload = new HashMap<>();
         payload.put("userId", userInfoId.toString());
-        // 生产 Token
+        // 使用 JWT 的工具类，通过UserID 生成 Token，
         String token = JWTUtil.createToken(payload, "token".getBytes(StandardCharsets.UTF_8));
 
         // 把用户信息存入 Redis， userid 为 key
         redisService.set("login:" + userInfoId, userInfo);
-        return token;
+
+        // 把用户的信息返回
+        UserInfoDTO userLoginInfo = BeanCopyUtils.copyObject(userInfo, UserInfoDTO.class);
+        userLoginInfo.setToken(token);
+        // 更新用户IP地址，最近登陆时间
+        this.updateUserInfo(userLoginInfo);
+        return userLoginInfo;
+    }
+
+    /**
+     * 更新用户信息
+     */
+    @Async
+    public void updateUserInfo(UserInfoDTO userLoginInfo) {
+        UserAuthEntity userAuth = UserAuthEntity.builder()
+                .id(userLoginInfo.getId())
+                .ipAddress(userLoginInfo.getIpAddress())
+                .ipSource(userLoginInfo.getIpSource())
+                .lastLoginTime(userLoginInfo.getLastLoginTime())
+                .build();
+        userAuthDao.updateById(userAuth);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.gmy.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gmy.blog.dto.user.UserBackDTO;
+import com.gmy.blog.dto.user.UserInfoDTO;
 import com.gmy.blog.entity.UserAuthEntity;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
@@ -43,7 +44,7 @@ public interface UserAuthService extends IService<UserAuthEntity> {
      * 用户登陆
      * @param userVo 登陆信息
      */
-    String  login(UserLoginVo userVo);
+    UserInfoDTO login(UserLoginVo userVo);
 
     /**
      * 退出登陆

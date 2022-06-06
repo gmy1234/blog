@@ -1,6 +1,7 @@
 package com.gmy.blog.api;
 
 import com.gmy.blog.annotation.AccessLimit;
+import com.gmy.blog.dto.user.UserInfoDTO;
 import com.gmy.blog.service.UserAuthService;
 import com.gmy.blog.vo.Result;
 import com.gmy.blog.vo.user.UserLoginVo;
@@ -63,9 +64,10 @@ public class UserAuthApi {
      */
     @ApiOperation(value = "用户登陆")
     @PostMapping("/login")
-    public Result<String> login(@RequestBody UserLoginVo userLoginVo) {
-        String token = userAuthService.login(userLoginVo);
-        return Result.ok(token);
+    public Result<UserInfoDTO> login(@RequestBody UserLoginVo userLoginVo) {
+        UserInfoDTO userInfo = userAuthService.login(userLoginVo);
+
+        return Result.ok(userInfo);
     }
 
     @GetMapping("/hello")

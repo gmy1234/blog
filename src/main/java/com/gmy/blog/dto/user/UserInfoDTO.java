@@ -20,6 +20,8 @@ import java.util.Set;
 @Builder
 public class UserInfoDTO {
 
+    private String token;
+
     /**
      * 用户账号id
      */
