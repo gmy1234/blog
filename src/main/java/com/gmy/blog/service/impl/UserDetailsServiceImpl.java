@@ -93,13 +93,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         // 查询账号角色       查询对应的权限信息
         List<String> roleList = roleDao.listRolesByUserInfoId(userInfo.getId());
         // 查询账号点赞信息
-        // Set<Object> articleLikeSet = redisService.sMembers(ARTICLE_USER_LIKE + userInfo.getId());
-        // Set<Object> commentLikeSet = redisService.sMembers(COMMENT_USER_LIKE + userInfo.getId());
-        // Set<Object> talkLikeSet = redisService.sMembers(TALK_USER_LIKE + userInfo.getId());
+        Set<Object> articleLikeSet = redisService.sMembers(ARTICLE_USER_LIKE + userInfo.getId());
+        Set<Object> commentLikeSet = redisService.sMembers(COMMENT_USER_LIKE + userInfo.getId());
+        Set<Object> talkLikeSet = redisService.sMembers(TALK_USER_LIKE + userInfo.getId());
         // 获取设备信息
-        // String ipAddress = IpUtils.getIpAddress(request);
-        // String ipSource = IpUtils.getIpSource(ipAddress);
-        // UserAgent userAgent = IpUtils.getUserAgent(request);
+        String ipAddress = IpUtils.getIpAddress(request);
+        String ipSource = IpUtils.getIpSource(ipAddress);
+        UserAgent userAgent = IpUtils.getUserAgent(request);
         // 封装权限集合
         return UserDetailDTO.builder()
                 .id(userEntity.getId())
@@ -110,17 +110,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .email(userInfo.getEmail())
                 .roleList(roleList)
                 .nickname(userInfo.getNickname())
-                .avatar("null")
-                .intro("intro")
-                .webSite("null")
-                .articleLikeSet(new HashSet<>())
-                .commentLikeSet(new HashSet<>())
-                .talkLikeSet(new HashSet<>())
-                .ipAddress("127.0.0.1")
-                .ipSource("ipSource")
+                .avatar(userInfo.getAvatar())
+                .intro(userInfo.getIntro())
+                .webSite("webSite")
+                .articleLikeSet(articleLikeSet)
+                .commentLikeSet(commentLikeSet)
+                .talkLikeSet(talkLikeSet)
+                .ipAddress(ipAddress)
+                .ipSource(ipSource)
                 .isDisable(userInfo.getIsDisable())
-                .browser("browers")
-                .os("macos")
+                .browser(userAgent.getBrowser().getName())
+                .os(userAgent.getOperatingSystem().getName())
                 .lastLoginTime(LocalDateTime.now(ZoneId.of(SHANGHAI.getZone())))
                 .build();
     }
