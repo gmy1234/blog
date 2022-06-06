@@ -27,6 +27,7 @@ import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.PageUtils;
 import com.gmy.blog.vo.user.UserDetailDTO;
+import com.gmy.blog.vo.user.UserLoginVo;
 import com.gmy.blog.vo.user.UserVO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -175,7 +176,7 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
 
 
     @Override
-    public String login(UserVO userVo) {
+    public String login(UserLoginVo userVo) {
         log.info("执行了 login 方法：");
         // AuthenticationManager 进行用户认证
         UsernamePasswordAuthenticationToken authenticationToken =

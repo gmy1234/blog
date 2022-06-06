@@ -18,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -54,6 +55,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AccessDeniedHandlerImpl accessDeniedHandler;
 
+    @Autowired
+    private AuthenticationSuccessHandler AuthenticationSuccessHandlerImpl;
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception{
@@ -86,6 +90,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 权限不足处理（授权失败处理）
                 .accessDeniedHandler(accessDeniedHandler);
     }
-
 
 }

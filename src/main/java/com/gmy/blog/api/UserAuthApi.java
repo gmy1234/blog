@@ -3,6 +3,7 @@ package com.gmy.blog.api;
 import com.gmy.blog.annotation.AccessLimit;
 import com.gmy.blog.service.UserAuthService;
 import com.gmy.blog.vo.Result;
+import com.gmy.blog.vo.user.UserLoginVo;
 import com.gmy.blog.vo.user.UserVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -57,13 +58,13 @@ public class UserAuthApi {
     /**
      * 用户注册
      *
-     * @param userVo 用户登陆信息
+     * @param userLoginVo 用户登陆信息
      * @return {@link Result<>}
      */
     @ApiOperation(value = "用户登陆")
     @PostMapping("/login")
-    public Result<String> login(@RequestBody UserVO userVo) {
-        String token = userAuthService.login(userVo);
+    public Result<String> login(@RequestBody UserLoginVo userLoginVo) {
+        String token = userAuthService.login(userLoginVo);
         return Result.ok(token);
     }
 

@@ -13,17 +13,16 @@ import javax.validation.constraints.Size;
 
 /**
  * @author gmydl
- * @title: UserVO
+ * @title: UserLoginVo
  * @projectName blog-api
- * @description: 注册用的vo
- * @date 2022/6/4 16:07
+ * @description: 用户登陆用的vo
+ * @date 2022/6/6 11:56
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserVO {
-
+public class UserLoginVo {
     /**
      * 用户名
      */
@@ -39,11 +38,4 @@ public class UserVO {
     @NotBlank(message = "密码不能为空")
     @ApiModelProperty(name = "password", value = "密码", required = true, dataType = "String")
     private String password;
-
-    /**
-     * 验证码
-     */
-    @NotBlank(message = "验证码不能为空")
-    @ApiModelProperty(name = "code", value = "邮箱验证码", required = true, dataType = "String")
-    private String code;
 }

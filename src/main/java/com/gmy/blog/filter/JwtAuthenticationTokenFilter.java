@@ -25,7 +25,7 @@ import java.util.Objects;
  * @author gmydl
  * @title: JwtAuthenticationTokenFilter
  * @projectName blog-api
- * @description: 认证过滤器
+ * @description: 认证过滤器,用于用户登录时
  * @date 2022/6/5 13:51
  */
 @Component

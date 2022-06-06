@@ -5,6 +5,7 @@ import com.gmy.blog.dto.user.UserBackDTO;
 import com.gmy.blog.entity.UserAuthEntity;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
+import com.gmy.blog.vo.user.UserLoginVo;
 import com.gmy.blog.vo.user.UserVO;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public interface UserAuthService extends IService<UserAuthEntity> {
      * 用户登陆
      * @param userVo 登陆信息
      */
-    String  login(UserVO userVo);
+    String  login(UserLoginVo userVo);
 
     /**
      * 退出登陆
