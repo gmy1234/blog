@@ -19,7 +19,7 @@ public class RedisPrefixConst {
     /**
      * 博客浏览量
      */
-    public static final String BLOG_V_COUNT = "blog_views_count";
+    public static final String BLOG_VIEWS_COUNT = "blog_views_count";
 
     /**
      * 文章浏览量
