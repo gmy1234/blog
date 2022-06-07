@@ -68,6 +68,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .cors()
+                .and()
                 // 关闭csrf
                 .csrf().disable()
                 // 不通过 Session 获取 SecurityContext，前后端分离，session基本不用
@@ -77,9 +79,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/user/login").anonymous() // anonymous() 匿名状态可访问，已经登陆状态不能访问。
                 .antMatchers("/user/code").permitAll() // permitAll() 无论是否登陆，都可以访问。
-                .antMatchers("/admin/user/login").permitAll() // 设置后台登陆过滤
-                .antMatchers("/admin/user/info").permitAll() // 设置后台登陆过滤
-                .antMatchers("/admin/**").permitAll() // 设置后台登陆过滤
+                .antMatchers("/admin/user/login").anonymous() // 设置后台登陆过滤
+                .antMatchers("/admin/user/info").permitAll()
+                .antMatchers("/admin/**").hasAnyAuthority("admin")
                 .anyRequest().authenticated();
 
         // 添加过滤器，在指定的过滤器之前添加。p1: 过滤器，p2: 指定过滤器的字节码。

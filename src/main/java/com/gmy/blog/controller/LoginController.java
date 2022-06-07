@@ -1,8 +1,13 @@
 package com.gmy.blog.controller;
 
+import com.gmy.blog.dto.user.UserInfoDTO;
+import com.gmy.blog.service.UserAuthService;
 import com.gmy.blog.vo.Result;
+import com.gmy.blog.vo.user.UserLoginVo;
 import io.swagger.annotations.Api;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -22,8 +27,11 @@ import java.util.List;
 @RequestMapping("/admin/user")
 public class LoginController {
 
+    @Autowired
+    private UserAuthService userAuthService;
+
     @GetMapping("/info")
-    public Result<HashMap<String,String>>login(){
+    public Result<HashMap<String,String>>info(){
 
         HashMap<String,String> data = new HashMap<>(3);
         data.put("name", "admin");
@@ -33,10 +41,17 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public Result<String> info(){
+    public Result<String> login(@RequestBody UserLoginVo userLoginVo){
 
-        return Result.ok("admin", "token");
+        UserInfoDTO userInfo = userAuthService.login(userLoginVo);
+        return Result.ok(userInfo.getToken());
     }
 
 
+    @PostMapping("/logout")
+    public Result<String> logout(){
+
+        String logoutMessage = userAuthService.logout();
+        return Result.ok(logoutMessage);
+    }
 }

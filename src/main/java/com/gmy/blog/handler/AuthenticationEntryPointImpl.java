@@ -29,6 +29,6 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
         // 处理异常
         response.setContentType(APPLICATION_JSON);
-        response.getWriter().write(JSON.toJSONString(Result.fail("用户未登陆")));
+        response.getWriter().write(JSON.toJSONString(Result.fail("认证失败")));
     }
 }

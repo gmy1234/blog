@@ -74,8 +74,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         // 查询用户ID 对应的权限
 
-
-
         // 返回 UserDetails
         return this.convertUserDetail(userEntity, request);
     }
