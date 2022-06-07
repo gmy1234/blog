@@ -81,7 +81,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/code").permitAll() // permitAll() 无论是否登陆，都可以访问。
                 .antMatchers("/admin/user/login").anonymous() // 设置后台登陆过滤
                 .antMatchers("/admin/user/info").permitAll()
-                .antMatchers("/admin/**").hasAnyAuthority("admin")
+                .antMatchers("/admin/upload/articles/images").permitAll() // 放行上传文章封面，特殊
+                .antMatchers("/admin/**/**").hasAnyAuthority("admin")
                 .anyRequest().authenticated();
 
         // 添加过滤器，在指定的过滤器之前添加。p1: 过滤器，p2: 指定过滤器的字节码。
