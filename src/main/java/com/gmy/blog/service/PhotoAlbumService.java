@@ -1,6 +1,7 @@
 package com.gmy.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gmy.blog.dto.wallpaper.PhotoAlbumBackDTO;
 import com.gmy.blog.dto.wallpaper.PhotoAlbumDTO;
 import com.gmy.blog.entity.PhotoAlbumEntity;
 
@@ -21,4 +22,5 @@ public interface PhotoAlbumService extends IService<PhotoAlbumEntity>{
      */
     List<PhotoAlbumDTO> listPhotoAlbums();
 
+    PhotoAlbumBackDTO getAlbumBackById(Integer albumId);
 }

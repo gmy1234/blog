@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gmy.blog.dao.PhotoAlbumDao;
 import com.gmy.blog.dao.PhotoDao;
+import com.gmy.blog.dto.wallpaper.PhotoAlbumBackDTO;
 import com.gmy.blog.dto.wallpaper.PhotoAlbumDTO;
 import com.gmy.blog.entity.PhotoAlbumEntity;
+import com.gmy.blog.entity.PhotoEntity;
 import com.gmy.blog.service.PhotoAlbumService;
 import com.gmy.blog.util.BeanCopyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +41,18 @@ public class PhotoAlbumServiceImpl extends ServiceImpl<PhotoAlbumDao, PhotoAlbum
                 .eq(PhotoAlbumEntity::getIsDelete, FALSE)
                 .orderByDesc(PhotoAlbumEntity::getId));
         return BeanCopyUtils.copyList(photoAlbumList, PhotoAlbumDTO.class);
+    }
+
+    @Override
+    public PhotoAlbumBackDTO getAlbumBackById(Integer albumId) {
+
+        PhotoAlbumEntity albumInfo = photoAlbumDao.selectById(albumId);
+        PhotoAlbumBackDTO albumBackData = BeanCopyUtils.copyObject(albumInfo, PhotoAlbumBackDTO.class);
+        // 查询照片的数量
+        Long photoCount = photoDao.selectCount(new LambdaQueryWrapper<PhotoEntity>()
+                .eq(PhotoEntity::getAlbumId, albumId)
+                .eq(PhotoEntity::getIsDelete, FALSE));
+        albumBackData.setPhotoCount(Math.toIntExact(photoCount));
+        return albumBackData;
     }
 }
