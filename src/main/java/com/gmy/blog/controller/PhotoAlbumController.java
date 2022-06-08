@@ -102,4 +102,17 @@ public class PhotoAlbumController {
         photoAlbumService.saveOrUpdatePhotoAlbum(photoAlbumVO);
         return Result.ok();
     }
+
+    /**
+     * 删除相册
+     *
+     * @param albumId 相册的 id
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "删除相册")
+    @GetMapping("/delete/{albumId}")
+    public Result<?> deleteAlbum(@PathVariable("albumId") Integer albumId) {
+        photoAlbumService.deleteAlbum(albumId);
+        return Result.ok();
+    }
 }

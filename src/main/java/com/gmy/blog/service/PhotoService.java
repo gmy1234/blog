@@ -29,4 +29,10 @@ public interface PhotoService extends IService<PhotoEntity> {
      * @param photoVo 照片的信息
      */
     void uploadPhotos(PhotoVO photoVo);
+
+    /**
+     * 移动到其他相册
+     * @param photoVO 照片集
+     */
+    void moveOtherAlbum(PhotoVO photoVO);
 }

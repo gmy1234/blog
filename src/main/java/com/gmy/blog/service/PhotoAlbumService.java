@@ -45,4 +45,10 @@ public interface PhotoAlbumService extends IService<PhotoAlbumEntity>{
      * @return {@link PageResult<PhotoAlbumBackDTO>} 相册列表
      */
     PageResult<PhotoAlbumBackDTO> searchAlbums(ConditionVO condition);
+
+    /**
+     * 删除相册
+     * @param albumId 相册ID
+     */
+    void deleteAlbum(Integer albumId);
 }

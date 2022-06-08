@@ -1,5 +1,6 @@
 package com.gmy.blog.controller;
 
+import com.gmy.blog.annotation.OptLog;
 import com.gmy.blog.dto.wallpaper.PhotoBackDTO;
 import com.gmy.blog.dto.wallpaper.PhotoVO;
 import com.gmy.blog.service.PhotoService;
@@ -9,6 +10,10 @@ import com.gmy.blog.vo.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+import static com.gmy.blog.constant.OptTypeConst.UPDATE;
 
 /**
  * @author gmydl
@@ -47,6 +52,20 @@ public class PhotoController {
     @PostMapping("/uploadPhotos")
     public Result<?> uploadPhotos(@RequestBody PhotoVO photoVo) {
         photoService.uploadPhotos(photoVo);
+        return Result.ok();
+    }
+
+    /**
+     * 移动照片到指定相册 其他
+     *
+     * @param photoVO 照片信息
+     * @return {@link Result<>}
+     */
+    @OptLog(optType = UPDATE)
+    @ApiOperation(value = "移动照片相册")
+    @PostMapping("/moveOtherAlbum")
+    public Result<?> moveOtherAlbum(@Valid @RequestBody PhotoVO photoVO) {
+        photoService.moveOtherAlbum(photoVO);
         return Result.ok();
     }
 }

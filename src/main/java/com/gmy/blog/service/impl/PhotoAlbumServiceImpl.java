@@ -1,6 +1,7 @@
 package com.gmy.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gmy.blog.dao.PhotoAlbumDao;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.gmy.blog.constant.CommonConst.FALSE;
+import static com.gmy.blog.constant.CommonConst.TRUE;
 import static com.gmy.blog.enums.PhotoAlbumStatusEnum.PUBLIC;
 
 /**
@@ -92,5 +94,25 @@ public class PhotoAlbumServiceImpl extends ServiceImpl<PhotoAlbumDao, PhotoAlbum
         // 查询相册信息
         List<PhotoAlbumBackDTO> photoAlbumBackList = photoAlbumDao.listPhotoAlbumBacks(PageUtils.getLimitCurrent(), PageUtils.getSize(), condition);
         return new PageResult<PhotoAlbumBackDTO>(photoAlbumBackList, Math.toIntExact(count));
+    }
+
+    @Override
+    public void deleteAlbum(Integer albumId) {
+        Long photoCount = photoDao.selectCount(new LambdaQueryWrapper<PhotoEntity>()
+                .eq(PhotoEntity::getAlbumId, albumId));
+        // 相册里的照片数量  >  0
+        if (photoCount > 0) {
+            // 逻辑删除相册里的照片
+            photoAlbumDao.updateById(PhotoAlbumEntity.builder()
+                    .id(albumId)
+                    .isDelete(TRUE)
+                    .build());
+            photoDao.update(new PhotoEntity(), new LambdaUpdateWrapper<PhotoEntity>()
+                    .set(PhotoEntity::getIsDelete, TRUE)
+                    .eq(PhotoEntity::getAlbumId, albumId));
+        }else {
+            // 直接删除 相册
+            photoAlbumDao.deleteById(albumId);
+        }
     }
 }

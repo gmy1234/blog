@@ -65,4 +65,18 @@ public class PhotoServiceImpl extends ServiceImpl<PhotoDao, PhotoEntity> impleme
 
         this.saveBatch(photoList);
     }
+
+    @Override
+    public void moveOtherAlbum(PhotoVO photoVO) {
+        // 获取指定到 相册ID
+        Integer albumId = photoVO.getAlbumId();
+
+        List<Integer> photoIdList = photoVO.getPhotoIdList();
+        List<PhotoEntity> photosData = photoIdList.stream().map(item -> PhotoEntity.builder()
+                        .albumId(albumId)
+                        .id(item)
+                        .build())
+                .collect(Collectors.toList());
+        this.updateBatchById(photosData);
+    }
 }
