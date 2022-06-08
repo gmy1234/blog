@@ -1,7 +1,9 @@
 package com.gmy.blog.controller;
 
+import com.gmy.blog.annotation.OptLog;
 import com.gmy.blog.dto.wallpaper.PhotoAlbumBackDTO;
 import com.gmy.blog.dto.wallpaper.PhotoAlbumDTO;
+import com.gmy.blog.dto.wallpaper.PhotoAlbumVO;
 import com.gmy.blog.enums.FilePathEnum;
 import com.gmy.blog.service.PhotoAlbumService;
 import com.gmy.blog.strategy.context.UploadStrategyContext;
@@ -12,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
+
+import static com.gmy.blog.constant.OptTypeConst.SAVE_OR_UPDATE;
 
 /**
  * @author gmydl
@@ -27,9 +32,22 @@ public class PhotoAlbumController {
 
     @Autowired
     private UploadStrategyContext uploadStrategyContext;
+
     @Autowired
     private PhotoAlbumService photoAlbumService;
 
+    /**
+     * 上传相册封面
+     *
+     * @param file 文件
+     * @return {@link Result<String>} 相册封面地址
+     */
+    @ApiOperation(value = "上传相册封面")
+    @ApiImplicitParam(name = "file", value = "相册封面", required = true, dataType = "MultipartFile")
+    @PostMapping("/uploadCover")
+    public Result<String> savePhotoAlbumCover(MultipartFile file) {
+        return Result.ok(uploadStrategyContext.executeUploadStrategy(file, FilePathEnum.PHOTO.getPath()));
+    }
     /**
      * 获取相册列表
      *
@@ -57,15 +75,16 @@ public class PhotoAlbumController {
     }
 
     /**
-     * 上传相册封面
+     * 保存或更新相册
      *
-     * @param file 文件
-     * @return {@link Result<String>} 相册封面地址
+     * @param photoAlbumVO 相册信息
+     * @return {@link Result<>}
      */
-    @ApiOperation(value = "上传相册封面")
-    @ApiImplicitParam(name = "file", value = "相册封面", required = true, dataType = "MultipartFile")
-    @PostMapping("/uploadCover")
-    public Result<String> savePhotoAlbumCover(MultipartFile file) {
-        return Result.ok(uploadStrategyContext.executeUploadStrategy(file, FilePathEnum.PHOTO.getPath()));
+    @OptLog(optType = SAVE_OR_UPDATE)
+    @ApiOperation(value = "保存或更新相册")
+    @PostMapping("/saveOrUpdate")
+    public Result<?> saveOrUpdatePhotoAlbum(@Valid @RequestBody PhotoAlbumVO photoAlbumVO) {
+        photoAlbumService.saveOrUpdatePhotoAlbum(photoAlbumVO);
+        return Result.ok();
     }
 }
