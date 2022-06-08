@@ -5,6 +5,8 @@ import com.gmy.blog.dto.wallpaper.PhotoAlbumBackDTO;
 import com.gmy.blog.dto.wallpaper.PhotoAlbumDTO;
 import com.gmy.blog.dto.wallpaper.PhotoAlbumVO;
 import com.gmy.blog.entity.PhotoAlbumEntity;
+import com.gmy.blog.vo.ConditionVO;
+import com.gmy.blog.vo.PageResult;
 
 import java.util.List;
 
@@ -35,4 +37,12 @@ public interface PhotoAlbumService extends IService<PhotoAlbumEntity>{
      * @param photoAlbumVO 相册信息
      */
     void saveOrUpdatePhotoAlbum(PhotoAlbumVO photoAlbumVO);
+
+    /**
+     * 搜索后台相册列表
+     *
+     * @param condition 条件
+     * @return {@link PageResult<PhotoAlbumBackDTO>} 相册列表
+     */
+    PageResult<PhotoAlbumBackDTO> searchAlbums(ConditionVO condition);
 }

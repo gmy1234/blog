@@ -1,6 +1,7 @@
 package com.gmy.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gmy.blog.dao.PhotoAlbumDao;
 import com.gmy.blog.dao.PhotoDao;
@@ -12,6 +13,9 @@ import com.gmy.blog.entity.PhotoEntity;
 import com.gmy.blog.exception.BizException;
 import com.gmy.blog.service.PhotoAlbumService;
 import com.gmy.blog.util.BeanCopyUtils;
+import com.gmy.blog.vo.ConditionVO;
+import com.gmy.blog.vo.PageResult;
+import com.gmy.blog.vo.PageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -73,5 +77,20 @@ public class PhotoAlbumServiceImpl extends ServiceImpl<PhotoAlbumDao, PhotoAlbum
         PhotoAlbumEntity responseData = BeanCopyUtils.copyObject(photoAlbumVO, PhotoAlbumEntity.class);
         this.saveOrUpdate(responseData);
 
+    }
+
+    @Override
+    public PageResult<PhotoAlbumBackDTO> searchAlbums(ConditionVO condition) {
+        // 查询相册数量
+        Long count = photoAlbumDao.selectCount(new LambdaQueryWrapper<PhotoAlbumEntity>()
+                .like(StringUtils.isNotBlank(condition.getKeywords()), PhotoAlbumEntity::getAlbumName, condition.getKeywords())
+                .eq(PhotoAlbumEntity::getIsDelete, FALSE));
+
+        if (count == 0) {
+            return new PageResult<>();
+        }
+        // 查询相册信息
+        List<PhotoAlbumBackDTO> photoAlbumBackList = photoAlbumDao.listPhotoAlbumBacks(PageUtils.getLimitCurrent(), PageUtils.getSize(), condition);
+        return new PageResult<PhotoAlbumBackDTO>(photoAlbumBackList, Math.toIntExact(count));
     }
 }

@@ -7,6 +7,8 @@ import com.gmy.blog.dto.wallpaper.PhotoAlbumVO;
 import com.gmy.blog.enums.FilePathEnum;
 import com.gmy.blog.service.PhotoAlbumService;
 import com.gmy.blog.strategy.context.UploadStrategyContext;
+import com.gmy.blog.vo.ConditionVO;
+import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.Result;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -48,6 +50,7 @@ public class PhotoAlbumController {
     public Result<String> savePhotoAlbumCover(MultipartFile file) {
         return Result.ok(uploadStrategyContext.executeUploadStrategy(file, FilePathEnum.PHOTO.getPath()));
     }
+
     /**
      * 获取相册列表
      *
@@ -57,6 +60,18 @@ public class PhotoAlbumController {
     @GetMapping("/list")
     public Result<List<PhotoAlbumDTO>> listPhotoAlbums() {
         List<PhotoAlbumDTO> response = photoAlbumService.listPhotoAlbums();
+        return Result.ok(response);
+    }
+
+    /**
+     * 搜索后台相册列表
+     *
+     * @param condition 条件
+     * @return {@link PageResult<PhotoAlbumBackDTO>} 相册列表
+     */
+    @GetMapping("/search")
+    public Result<PageResult<PhotoAlbumBackDTO>> searchAlbums(ConditionVO condition) {
+        PageResult<PhotoAlbumBackDTO> response = photoAlbumService.searchAlbums(condition);
         return Result.ok(response);
     }
 
