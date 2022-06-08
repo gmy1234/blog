@@ -2,6 +2,7 @@ package com.gmy.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gmy.blog.dto.wallpaper.PhotoBackDTO;
+import com.gmy.blog.dto.wallpaper.PhotoVO;
 import com.gmy.blog.entity.PhotoEntity;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
@@ -22,4 +23,10 @@ public interface PhotoService extends IService<PhotoEntity> {
      * @return {@link PageResult<PhotoBackDTO>} 照片列表
      */
     PageResult<PhotoBackDTO> listPhotos(ConditionVO condition);
+
+    /**
+     * 上传照片
+     * @param photoVo 照片的信息
+     */
+    void uploadPhotos(PhotoVO photoVo);
 }

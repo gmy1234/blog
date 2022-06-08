@@ -2,16 +2,15 @@ package com.gmy.blog.controller;
 
 import com.gmy.blog.dto.wallpaper.PhotoAlbumBackDTO;
 import com.gmy.blog.dto.wallpaper.PhotoAlbumDTO;
+import com.gmy.blog.enums.FilePathEnum;
 import com.gmy.blog.service.PhotoAlbumService;
 import com.gmy.blog.strategy.context.UploadStrategyContext;
 import com.gmy.blog.vo.Result;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -55,5 +54,18 @@ public class PhotoAlbumController {
     public Result<PhotoAlbumBackDTO> getAlbumBackById(@PathVariable("albumId") Integer albumId) {
         PhotoAlbumBackDTO response = photoAlbumService.getAlbumBackById(albumId);
         return Result.ok(response);
+    }
+
+    /**
+     * 上传相册封面
+     *
+     * @param file 文件
+     * @return {@link Result<String>} 相册封面地址
+     */
+    @ApiOperation(value = "上传相册封面")
+    @ApiImplicitParam(name = "file", value = "相册封面", required = true, dataType = "MultipartFile")
+    @PostMapping("/uploadCover")
+    public Result<String> savePhotoAlbumCover(MultipartFile file) {
+        return Result.ok(uploadStrategyContext.executeUploadStrategy(file, FilePathEnum.PHOTO.getPath()));
     }
 }

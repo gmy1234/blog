@@ -2,10 +2,12 @@ package com.gmy.blog.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gmy.blog.dao.PhotoDao;
 import com.gmy.blog.dto.wallpaper.PhotoBackDTO;
+import com.gmy.blog.dto.wallpaper.PhotoVO;
 import com.gmy.blog.entity.PhotoEntity;
 import com.gmy.blog.service.PhotoAlbumService;
 import com.gmy.blog.service.PhotoService;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author gmydl
@@ -46,6 +49,20 @@ public class PhotoServiceImpl extends ServiceImpl<PhotoDao, PhotoEntity> impleme
                 .orderByDesc(PhotoEntity::getUpdateTime));
 
         List<PhotoBackDTO> photoList = BeanCopyUtils.copyList(photoPage.getRecords(), PhotoBackDTO.class);
-        return new PageResult<PhotoBackDTO>(photoList, (int)photoPage.getTotal());
+        return new PageResult<PhotoBackDTO>(photoList, (int) photoPage.getTotal());
+    }
+
+
+    @Override
+    public void uploadPhotos(PhotoVO photoVo) {
+        List<PhotoEntity> photoList = photoVo.getPhotoUrlList().stream().map(item ->
+            PhotoEntity.builder()
+                    .albumId(photoVo.getAlbumId())
+                    .photoName(IdWorker.getIdStr())
+                    .photoSrc(item)
+                    .build()
+        ).collect(Collectors.toList());
+
+        this.saveBatch(photoList);
     }
 }
