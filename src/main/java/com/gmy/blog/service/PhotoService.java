@@ -2,7 +2,7 @@ package com.gmy.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gmy.blog.dto.wallpaper.PhotoBackDTO;
-import com.gmy.blog.dto.wallpaper.PhotoVO;
+import com.gmy.blog.vo.PhotoVO;
 import com.gmy.blog.entity.PhotoEntity;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;

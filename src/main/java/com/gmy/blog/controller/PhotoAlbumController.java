@@ -3,7 +3,7 @@ package com.gmy.blog.controller;
 import com.gmy.blog.annotation.OptLog;
 import com.gmy.blog.dto.wallpaper.PhotoAlbumBackDTO;
 import com.gmy.blog.dto.wallpaper.PhotoAlbumDTO;
-import com.gmy.blog.dto.wallpaper.PhotoAlbumVO;
+import com.gmy.blog.vo.PhotoAlbumVO;
 import com.gmy.blog.enums.FilePathEnum;
 import com.gmy.blog.service.PhotoAlbumService;
 import com.gmy.blog.strategy.context.UploadStrategyContext;

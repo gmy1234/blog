@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gmy.blog.dao.PhotoDao;
 import com.gmy.blog.dto.wallpaper.PhotoBackDTO;
-import com.gmy.blog.dto.wallpaper.PhotoVO;
+import com.gmy.blog.vo.PhotoVO;
 import com.gmy.blog.entity.PhotoEntity;
 import com.gmy.blog.service.PhotoAlbumService;
 import com.gmy.blog.service.PhotoService;

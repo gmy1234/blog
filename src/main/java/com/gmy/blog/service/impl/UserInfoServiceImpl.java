@@ -23,6 +23,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoDao, UserInfoEntity
     @Override
     public PageResult<UserOnlineDTO> listOnlineUsers(ConditionVO conditionVO) {
         // TODO:spring aq
+        // 获取security在线session
         return new PageResult<>();
     }
 }

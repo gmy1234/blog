@@ -3,7 +3,8 @@ package com.gmy.blog.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gmy.blog.dto.wallpaper.PhotoAlbumBackDTO;
 import com.gmy.blog.dto.wallpaper.PhotoAlbumDTO;
-import com.gmy.blog.dto.wallpaper.PhotoAlbumVO;
+import com.gmy.blog.dto.wallpaper.PhotoDTO;
+import com.gmy.blog.vo.PhotoAlbumVO;
 import com.gmy.blog.entity.PhotoAlbumEntity;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
@@ -51,4 +52,11 @@ public interface PhotoAlbumService extends IService<PhotoAlbumEntity>{
      * @param albumId 相册ID
      */
     void deleteAlbum(Integer albumId);
+
+    /**
+     * 根据 相册 ID 获取图片列表
+     * @param albumId 相册 ID
+     * @return 图片
+     */
+    PhotoDTO getPhotos(Integer albumId);
 }
