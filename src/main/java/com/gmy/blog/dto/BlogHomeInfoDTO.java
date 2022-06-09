@@ -1,6 +1,6 @@
 package com.gmy.blog.dto;
 
-import com.gmy.blog.vo.PageVO;
+import com.gmy.blog.vo.BackgroundVO;
 import com.gmy.blog.vo.WebsiteConfigVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,5 +49,5 @@ public class BlogHomeInfoDTO {
     /**
      * 页面列表
      */
-    private List<PageVO> pageList;
+    private List<BackgroundVO> pageList;
 }

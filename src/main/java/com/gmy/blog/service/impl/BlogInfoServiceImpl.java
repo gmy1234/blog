@@ -3,7 +3,6 @@ package com.gmy.blog.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gmy.blog.constant.RedisPrefixConst;
 import com.gmy.blog.dao.ArticleDao;
 import com.gmy.blog.dao.CategoryDao;
 import com.gmy.blog.dao.TagDao;
@@ -14,7 +13,7 @@ import com.gmy.blog.entity.WebsiteConfigEntity;
 import com.gmy.blog.service.BlogInfoService;
 import com.gmy.blog.service.RedisService;
 import com.gmy.blog.util.IpUtils;
-import com.gmy.blog.vo.PageVO;
+import com.gmy.blog.vo.BackgroundVO;
 import com.gmy.blog.vo.WebsiteConfigVO;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
@@ -115,7 +114,7 @@ public class BlogInfoServiceImpl implements BlogInfoService {
         WebsiteConfigVO websiteConfig = this.getWebsiteConfig();
 
         // TODO:查询 页面信息
-        List<PageVO> backgrounds = new ArrayList<>();
+        List<BackgroundVO> backgrounds = new ArrayList<>();
 
         // 封装
         return BlogHomeInfoDTO.builder()

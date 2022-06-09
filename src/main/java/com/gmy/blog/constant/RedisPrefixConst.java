@@ -74,7 +74,7 @@ public class RedisPrefixConst {
     /**
      * 页面封面
      */
-    public static final String PAGE_COVER = "page_cover";
+    public static final String BACKGROUND = "background";
 
     /**
      * 关于我信息
