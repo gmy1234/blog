@@ -27,4 +27,10 @@ public interface BlogInfoService {
      * @return 网站配置
      */
     WebsiteConfigVO getWebsiteConfig();
+
+    /**
+     * 更新网站配置
+     * @param websiteConfigVO 网站信息
+     */
+    void updateWebsiteConfig(WebsiteConfigVO websiteConfigVO);
 }

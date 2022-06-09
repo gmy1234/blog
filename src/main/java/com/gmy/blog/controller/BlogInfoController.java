@@ -5,9 +5,9 @@ import com.gmy.blog.vo.Result;
 import com.gmy.blog.vo.WebsiteConfigVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * @author gmydl
@@ -29,9 +29,22 @@ public class BlogInfoController {
      * @return {@link Result<WebsiteConfigVO>} 网站配置
      */
     @ApiOperation(value = "获取网站配置")
-    @GetMapping("/config")
+    @GetMapping("/getConfig")
     public Result<WebsiteConfigVO> getWebsiteConfig() {
         WebsiteConfigVO response = blogInfoService.getWebsiteConfig();
         return Result.ok(response);
+    }
+
+    /**
+     * 更新网站配置
+     *
+     * @param websiteConfigVO 网站配置信息
+     * @return {@link Result}
+     */
+    @ApiOperation(value = "更新网站配置")
+    @PostMapping("/updateConfig")
+    public Result<?> updateWebsiteConfig(@Valid @RequestBody WebsiteConfigVO websiteConfigVO) {
+        blogInfoService.updateWebsiteConfig(websiteConfigVO);
+        return Result.ok();
     }
 }

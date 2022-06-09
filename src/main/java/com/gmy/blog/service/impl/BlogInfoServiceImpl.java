@@ -10,6 +10,7 @@ import com.gmy.blog.dao.TagDao;
 import com.gmy.blog.dao.WebsiteConfigDao;
 import com.gmy.blog.dto.BlogHomeInfoDTO;
 import com.gmy.blog.entity.ArticleEntity;
+import com.gmy.blog.entity.WebsiteConfigEntity;
 import com.gmy.blog.service.BlogInfoService;
 import com.gmy.blog.service.RedisService;
 import com.gmy.blog.util.IpUtils;
@@ -110,7 +111,7 @@ public class BlogInfoServiceImpl implements BlogInfoService {
         Object count = redisService.get(BLOG_VIEWS_COUNT);
         String viewCount = Optional.ofNullable(count).orElse(0).toString();
 
-        // TODO:查询网站配置
+        // 查询网站配置
         WebsiteConfigVO websiteConfig = this.getWebsiteConfig();
 
         // TODO:查询 页面信息
@@ -130,11 +131,12 @@ public class BlogInfoServiceImpl implements BlogInfoService {
 
     /**
      * 查询网站信息
+     *
      * @return 网站信息
      */
-    public WebsiteConfigVO getWebsiteConfig(){
+    public WebsiteConfigVO getWebsiteConfig() {
 
-        WebsiteConfigVO websiteConfigVO ;
+        WebsiteConfigVO websiteConfigVO;
         // 获取缓存数据
         Object websiteConfig = redisService.get(WEBSITE_CONFIG);
         if (Objects.nonNull(websiteConfig)) {
@@ -146,5 +148,17 @@ public class BlogInfoServiceImpl implements BlogInfoService {
             redisService.set(WEBSITE_CONFIG, config);
         }
         return websiteConfigVO;
+    }
+
+    @Override
+    public void updateWebsiteConfig(WebsiteConfigVO websiteConfigVO) {
+        // 修改网站配置
+        WebsiteConfigEntity websiteConfig = WebsiteConfigEntity.builder()
+                .id(1)
+                .config(JSON.toJSONString(websiteConfigVO))
+                .build();
+        websiteConfigDao.updateById(websiteConfig);
+        // 删除缓存
+        redisService.del(WEBSITE_CONFIG);
     }
 }
