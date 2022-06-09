@@ -1,5 +1,7 @@
 package com.gmy.blog.service;
 
+import com.gmy.blog.dto.BlogHomeInfoDTO;
+
 /**
  * @author gmydl
  * @title: BlogInfoService
@@ -13,4 +15,9 @@ public interface BlogInfoService {
      */
     void reportVisitorInfo();
 
+    /**
+     * 获取博客信息
+     * @return 博客信息
+     */
+    BlogHomeInfoDTO getBlogHomeInfo();
 }

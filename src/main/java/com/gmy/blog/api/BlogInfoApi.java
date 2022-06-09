@@ -44,6 +44,8 @@ public class BlogInfoApi {
     @ApiOperation(value = "查看博客信息")
     @GetMapping("/info")
     public Result<BlogHomeInfoDTO> getBlogHomeInfo() {
-        return Result.ok(new BlogHomeInfoDTO());
+
+        BlogHomeInfoDTO res = blogInfoService.getBlogHomeInfo();
+        return Result.ok(res);
     }
 }
