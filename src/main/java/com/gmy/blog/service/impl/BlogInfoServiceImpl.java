@@ -1,11 +1,13 @@
 package com.gmy.blog.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.gmy.blog.constant.RedisPrefixConst;
 import com.gmy.blog.dao.ArticleDao;
 import com.gmy.blog.dao.CategoryDao;
 import com.gmy.blog.dao.TagDao;
+import com.gmy.blog.dao.WebsiteConfigDao;
 import com.gmy.blog.dto.BlogHomeInfoDTO;
 import com.gmy.blog.entity.ArticleEntity;
 import com.gmy.blog.service.BlogInfoService;
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.gmy.blog.constant.CommonConst.*;
@@ -56,6 +59,9 @@ public class BlogInfoServiceImpl implements BlogInfoService {
 
     @Resource
     private RedisService redisService;
+
+    @Autowired
+    private WebsiteConfigDao websiteConfigDao;
 
     @Override
     public void reportVisitorInfo() {
@@ -89,13 +95,6 @@ public class BlogInfoServiceImpl implements BlogInfoService {
         redisService.sAdd(UNIQUE_VISITOR, md5);
     }
 
-    /**
-     * 查询网站信息
-     * @return 网站信息
-     */
-    private WebsiteConfigVO getWebsiteConfig(){
-        return new WebsiteConfigVO();
-    }
 
     @Override
     public BlogHomeInfoDTO getBlogHomeInfo() {
@@ -126,5 +125,26 @@ public class BlogInfoServiceImpl implements BlogInfoService {
                 .tagCount(Math.toIntExact(tagCount))
                 .pageList(backgrounds)
                 .build();
+    }
+
+
+    /**
+     * 查询网站信息
+     * @return 网站信息
+     */
+    public WebsiteConfigVO getWebsiteConfig(){
+
+        WebsiteConfigVO websiteConfigVO ;
+        // 获取缓存数据
+        Object websiteConfig = redisService.get(WEBSITE_CONFIG);
+        if (Objects.nonNull(websiteConfig)) {
+            websiteConfigVO = JSON.parseObject(websiteConfig.toString(), WebsiteConfigVO.class);
+        } else {
+            // 从数据库中加载
+            String config = websiteConfigDao.selectById(DEFAULT_CONFIG_ID).getConfig();
+            websiteConfigVO = JSON.parseObject(config, WebsiteConfigVO.class);
+            redisService.set(WEBSITE_CONFIG, config);
+        }
+        return websiteConfigVO;
     }
 }

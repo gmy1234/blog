@@ -1,6 +1,7 @@
 package com.gmy.blog.service;
 
 import com.gmy.blog.dto.BlogHomeInfoDTO;
+import com.gmy.blog.vo.WebsiteConfigVO;
 
 /**
  * @author gmydl
@@ -20,4 +21,10 @@ public interface BlogInfoService {
      * @return 博客信息
      */
     BlogHomeInfoDTO getBlogHomeInfo();
+
+    /**
+     * 获取网站配置
+     * @return 网站配置
+     */
+    WebsiteConfigVO getWebsiteConfig();
 }
