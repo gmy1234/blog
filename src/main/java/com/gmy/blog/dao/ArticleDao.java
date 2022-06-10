@@ -2,10 +2,11 @@ package com.gmy.blog.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import com.gmy.blog.dto.ArticleBackDTO;
+import com.gmy.blog.dto.article.ArticleBackDTO;
+import com.gmy.blog.dto.article.ArticleDTO;
+import com.gmy.blog.dto.article.ArticleHomeDTO;
 import com.gmy.blog.entity.ArticleEntity;
 import com.gmy.blog.vo.ConditionVO;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -32,4 +33,20 @@ public interface ArticleDao extends BaseMapper<ArticleEntity> {
      */
     List<ArticleBackDTO> getListArticle(@Param("current") Long limitCurrent,
                                         @Param("size") Long size, @Param("condition") ConditionVO condition);
+
+    /**
+     * 前台 获取首页文章列表
+     * @param limitCurrent 页码
+     * @param size 大小
+     * @return 文章信息
+     */
+    List<ArticleHomeDTO> listArticle(@Param("current") Long limitCurrent,
+                                     @Param(("size")) Long size);
+
+    /**
+     * 根据id查询文章
+     * @param articleId 文章ID
+     * @return 文章信息
+     */
+    ArticleDTO getArticleById(Integer articleId);
 }

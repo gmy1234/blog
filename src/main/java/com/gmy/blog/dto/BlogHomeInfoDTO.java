@@ -49,5 +49,5 @@ public class BlogHomeInfoDTO {
     /**
      * 页面列表
      */
-    private List<BackgroundVO> pageList;
+    private List<BackgroundVO> backgroundList;
 }

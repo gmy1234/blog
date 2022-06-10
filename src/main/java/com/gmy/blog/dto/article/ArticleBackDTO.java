@@ -1,5 +1,6 @@
-package com.gmy.blog.dto;
+package com.gmy.blog.dto.article;
 
+import com.gmy.blog.dto.TagDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

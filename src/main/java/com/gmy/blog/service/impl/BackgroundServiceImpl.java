@@ -38,7 +38,7 @@ public class BackgroundServiceImpl extends ServiceImpl<BackgroundDao, Background
         List<BackgroundVO> backgroundVOList;
 
         Object backgroundList = redisService.get(BACKGROUND);
-        // 查数据库
+        // 查redis
         if (Objects.isNull(backgroundList)){
             List<BackgroundEntity> backgroundEntities = backgroundDao.selectList(null);
             backgroundVOList = BeanCopyUtils.copyList(backgroundEntities, BackgroundVO.class);

@@ -81,6 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/code").anonymous() // permitAll() 无论是否登陆，都可以访问。
                 .antMatchers("/wallpaper/**").permitAll() // 壁纸开放
                 .antMatchers("/blog/**").permitAll()
+                .antMatchers("/article/**").permitAll()
                 .antMatchers("/admin/user/login").anonymous() // 设置后台登陆过滤
                 .antMatchers("/admin/user/info").permitAll()
                 .antMatchers("/admin/upload/articles/images").permitAll() // 放行上传文章封面，特殊

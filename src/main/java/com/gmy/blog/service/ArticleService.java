@@ -2,7 +2,9 @@ package com.gmy.blog.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.gmy.blog.dto.ArticleBackDTO;
+import com.gmy.blog.dto.article.ArticleBackDTO;
+import com.gmy.blog.dto.article.ArticleDTO;
+import com.gmy.blog.dto.article.ArticleHomeDTO;
 import com.gmy.blog.entity.ArticleEntity;
 import com.gmy.blog.vo.*;
 
@@ -54,4 +56,17 @@ public interface ArticleService extends IService<ArticleEntity> {
      * @param articleIdList 文章ID集合
      */
     void phyDeleteArticles(DeleteVo articleIdList);
+
+    /**
+     * 前台 获取 文章列表
+     * @return 文章列表
+     */
+    List<ArticleHomeDTO> listArticle();
+
+    /**
+     * 通过文章ID获取前台文章信息
+     * @param articleId 文章ID
+     * @return 文章信息
+     */
+    ArticleDTO obtainArticleById(Integer articleId);
 }

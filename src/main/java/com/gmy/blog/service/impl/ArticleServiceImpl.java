@@ -2,37 +2,37 @@ package com.gmy.blog.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.gmy.blog.dao.ArticleDao;
 import com.gmy.blog.dao.ArticleTagDao;
 import com.gmy.blog.dao.CategoryDao;
 import com.gmy.blog.dao.TagDao;
-import com.gmy.blog.dto.ArticleBackDTO;
+import com.gmy.blog.dto.article.ArticleBackDTO;
+import com.gmy.blog.dto.article.ArticleDTO;
+import com.gmy.blog.dto.article.ArticleHomeDTO;
 import com.gmy.blog.entity.ArticleEntity;
 import com.gmy.blog.entity.ArticleTagEntity;
 import com.gmy.blog.entity.CategoryEntity;
 import com.gmy.blog.entity.TagEntity;
 import com.gmy.blog.exception.BizException;
-import com.gmy.blog.service.ArticleService;
-import com.gmy.blog.service.ArticleTagService;
-import com.gmy.blog.service.CategoryService;
-import com.gmy.blog.service.TagService;
+import com.gmy.blog.service.*;
 import com.gmy.blog.util.BeanCopyUtils;
+import com.gmy.blog.util.CommonUtils;
 import com.gmy.blog.vo.*;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.gmy.blog.constant.CommonConst.ARTICLE_SET;
 import static com.gmy.blog.constant.CommonConst.FALSE;
-import static com.gmy.blog.constant.CommonConst.TRUE;
+import static com.gmy.blog.constant.RedisPrefixConst.ARTICLE_LIKE_COUNT;
+import static com.gmy.blog.constant.RedisPrefixConst.ARTICLE_VIEWS_COUNT;
 import static com.gmy.blog.enums.ArticleStatusEnum.DRAFT;
 
 /**
@@ -65,6 +65,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     @Autowired
     private ArticleTagService articleTagService;
+
+    @Autowired
+    private HttpSession session;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public void publish(ArticleVo articleVo) {
@@ -250,4 +256,57 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         articleTagDao.delete(new LambdaQueryWrapper<ArticleTagEntity>()
                 .in(ArticleTagEntity::getArticleId, articleIdList));
     }
+
+    @Override
+    public List<ArticleHomeDTO> listArticle() {
+        return articleDao.listArticle(PageUtils.getLimitCurrent(), PageUtils.getSize());
+    }
+
+
+    /**
+     * 更新文章 浏览量
+     * @param articleId 文章 ID
+     */
+    private void updateArticleViewsCount(Integer articleId) {
+        // 判断是否第一次访问，增加浏览量
+        Object attribute = session.getAttribute(ARTICLE_SET);
+        Optional<Object> objectOptional = Optional.ofNullable(attribute);
+        Set<Integer> articleSet = CommonUtils.castSet(objectOptional.orElseGet(HashMap::new), Integer.class);
+        // 不包含
+        if (!articleSet.contains(articleId)){
+            articleSet.add(articleId);
+            session.setAttribute(ARTICLE_SET, articleSet);
+            // + 1
+            redisService.zIncr(ARTICLE_VIEWS_COUNT, articleId, 1D);
+        }
+
+    }
+
+    @Override
+    public ArticleDTO obtainArticleById(Integer articleId) {
+        // 获取文章详情
+        ArticleDTO article = articleDao.getArticleById(articleId);
+        if (Objects.isNull(article)){
+            throw new BizException("文章不存在");
+        }
+        // TODO 查询推荐文章
+
+        // TODO 查询最新文章
+
+        // 更新文章浏览量
+        this.updateArticleViewsCount(articleId);
+
+        // TODO: 查询上一票下一篇文章
+
+        // 封装点赞量和浏览量
+        Double score = redisService.zScore(ARTICLE_VIEWS_COUNT, articleId);
+        if (Objects.nonNull(score)) {
+            // 设置浏览量
+            article.setViewsCount(score.intValue());
+        }
+        // 设置点赞量
+        article.setLikeCount((Integer) redisService.hGet(ARTICLE_LIKE_COUNT, articleId.toString()));
+        return article;
+    }
+
 }

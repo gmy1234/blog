@@ -1,16 +1,14 @@
 package com.gmy.blog.controller;
 
-import com.gmy.blog.dto.ArticleBackDTO;
+import com.gmy.blog.dto.article.ArticleBackDTO;
 import com.gmy.blog.service.ArticleService;
 import com.gmy.blog.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * @author gmydl

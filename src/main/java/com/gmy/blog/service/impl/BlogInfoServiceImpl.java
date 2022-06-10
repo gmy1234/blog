@@ -10,6 +10,7 @@ import com.gmy.blog.dao.WebsiteConfigDao;
 import com.gmy.blog.dto.BlogHomeInfoDTO;
 import com.gmy.blog.entity.ArticleEntity;
 import com.gmy.blog.entity.WebsiteConfigEntity;
+import com.gmy.blog.service.BackgroundService;
 import com.gmy.blog.service.BlogInfoService;
 import com.gmy.blog.service.RedisService;
 import com.gmy.blog.util.IpUtils;
@@ -63,6 +64,9 @@ public class BlogInfoServiceImpl implements BlogInfoService {
     @Autowired
     private WebsiteConfigDao websiteConfigDao;
 
+    @Autowired
+    private BackgroundService backgroundService;
+
     @Override
     public void reportVisitorInfo() {
         // 获取ip
@@ -114,7 +118,7 @@ public class BlogInfoServiceImpl implements BlogInfoService {
         WebsiteConfigVO websiteConfig = this.getWebsiteConfig();
 
         // TODO:查询 页面信息
-        List<BackgroundVO> backgrounds = new ArrayList<>();
+        List<BackgroundVO> backgrounds = backgroundService.listBackground();
 
         // 封装
         return BlogHomeInfoDTO.builder()
@@ -123,7 +127,7 @@ public class BlogInfoServiceImpl implements BlogInfoService {
                 .websiteConfig(websiteConfig) // 网站信息
                 .viewsCount(viewCount)
                 .tagCount(Math.toIntExact(tagCount))
-                .pageList(backgrounds)
+                .backgroundList(backgrounds)
                 .build();
     }
 
