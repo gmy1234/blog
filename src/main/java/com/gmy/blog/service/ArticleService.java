@@ -69,4 +69,10 @@ public interface ArticleService extends IService<ArticleEntity> {
      * @return 文章信息
      */
     ArticleDTO obtainArticleById(Integer articleId);
+
+    /**
+     * 点赞文章
+     * @param articleId 文章ID
+     */
+    void saveArticleLike(Integer articleId);
 }

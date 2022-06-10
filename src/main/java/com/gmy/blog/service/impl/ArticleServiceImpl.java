@@ -19,6 +19,7 @@ import com.gmy.blog.exception.BizException;
 import com.gmy.blog.service.*;
 import com.gmy.blog.util.BeanCopyUtils;
 import com.gmy.blog.util.CommonUtils;
+import com.gmy.blog.util.UserUtils;
 import com.gmy.blog.vo.*;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,7 @@ import java.util.stream.Collectors;
 
 import static com.gmy.blog.constant.CommonConst.ARTICLE_SET;
 import static com.gmy.blog.constant.CommonConst.FALSE;
-import static com.gmy.blog.constant.RedisPrefixConst.ARTICLE_LIKE_COUNT;
-import static com.gmy.blog.constant.RedisPrefixConst.ARTICLE_VIEWS_COUNT;
+import static com.gmy.blog.constant.RedisPrefixConst.*;
 import static com.gmy.blog.enums.ArticleStatusEnum.DRAFT;
 
 /**
@@ -307,6 +307,23 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         // 设置点赞量
         article.setLikeCount((Integer) redisService.hGet(ARTICLE_LIKE_COUNT, articleId.toString()));
         return article;
+    }
+
+    @Override
+    public void saveArticleLike(Integer articleId) {
+        // 判断是否点赞
+        String articleLikeKey = ARTICLE_USER_LIKE + UserUtils.getLoginUser().getUserInfoId();
+
+        if (redisService.sIsMember(articleLikeKey, articleId)){
+            // 点过赞则删除文章 id
+            redisService.sRemove(articleLikeKey, articleId);
+            // -1
+            redisService.hDecr(ARTICLE_VIEWS_COUNT, articleId.toString(), 1L);
+        }else {
+            redisService.sAdd(articleLikeKey, articleId);
+            redisService.hIncr(ARTICLE_LIKE_COUNT, articleId.toString(), 1L);
+        }
+
     }
 
 }
