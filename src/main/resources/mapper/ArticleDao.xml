@@ -165,8 +165,25 @@
                  a.id DESC
     </select>
 
+    <resultMap id="articleResultMap" type="com.gmy.blog.dto.article.ArticleDTO">
+        <id column="id" property="id"/>
+        <result column="article_cover" property="articleCover"/>
+        <result column="article_title" property="articleTitle"/>
+        <result column="article_content" property="articleContent"/>
+        <result column="type" property="type"/>
+        <result column="original_url" property="originalUrl"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="category_name" property="categoryName"/>
+        <collection property="tagDTOList" ofType="com.gmy.blog.dto.TagDTO">
+            <id column="tag_id" property="id"/>
+            <result column="tag_name" property="tagName"/>
+        </collection>
+    </resultMap>
+
     <!-- 根据文章 ID 查询文章信息-->
-    <select id="getArticleById" resultType="com.gmy.blog.dto.article.ArticleDTO">
+    <select id="getArticleById" resultMap="articleResultMap">
         SELECT
             a.id,
             article_cover,
