@@ -207,4 +207,16 @@
           AND a.is_delete = 0
           AND a.status = 1
     </select>
+
+    <select id="listArticleStatistics" resultType="com.gmy.blog.dto.article.ArticleStatisticsDTO">
+        SELECT
+            DATE_FORMAT( create_time, "%Y-%m-%d" ) AS date,
+            COUNT( 1 ) AS count
+        FROM
+            tb_article
+        GROUP BY
+            date
+        ORDER BY
+            date DESC
+    </select>
 </mapper>

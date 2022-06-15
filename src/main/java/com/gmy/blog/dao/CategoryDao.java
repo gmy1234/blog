@@ -2,6 +2,7 @@ package com.gmy.blog.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gmy.blog.dto.CategoryBackDTO;
+import com.gmy.blog.dto.CategoryDTO;
 import com.gmy.blog.entity.CategoryEntity;
 import com.gmy.blog.vo.ConditionVO;
 import org.apache.ibatis.annotations.Param;
@@ -26,4 +27,12 @@ public interface CategoryDao extends BaseMapper<CategoryEntity> {
      * @return 返回需要的数据
      */
     List<CategoryBackDTO> listCategoryBackDTO(@Param("currentPage") Long current, @Param("pageSize") Long size, @Param("condition") ConditionVO condition);
+
+    /**
+     * 查询分类和对应文章数量
+     *
+     * @return 分类列表
+     */
+    List<CategoryDTO> listCategoryDTO();
+
 }

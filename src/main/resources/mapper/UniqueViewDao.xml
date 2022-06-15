@@ -3,5 +3,12 @@
 <mapper namespace="com.gmy.blog.dao.UniqueViewDao">
 
 
-
+    <select id="listUniqueViews" resultType="com.gmy.blog.dto.UniqueViewDTO">
+        SELECT DATE_FORMAT(create_time, "%Y-%m-%d") as `day`,
+               views_count
+        FROM `tb_unique_view`
+        WHERE create_time &gt; #{startTime}
+          AND create_time &lt;= #{endTime}
+        ORDER BY create_time
+    </select>
 </mapper>

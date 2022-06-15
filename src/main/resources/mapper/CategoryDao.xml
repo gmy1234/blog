@@ -6,7 +6,7 @@
     <select id="listCategoryBackDTO" resultType="com.gmy.blog.dto.CategoryBackDTO">
         select c.id, c.category_name, COUNT(a.id) AS article_count, c.create_time
         FROM tb_category c
-                 LEFT JOIN tb_article a on c.id = a.category_id
+        LEFT JOIN tb_article a on c.id = a.category_id
         <where>
             <if test="condition.keywords != null">
                 category_name like concat('%', #{condition.keywords}, '%')
@@ -15,6 +15,16 @@
         GROUP BY c.id
         ORDER BY c.id desc
         LIMIT #{currentPage}, #{pageSize};
+    </select>
+
+    <select id="listCategoryDTO" resultType="com.gmy.blog.dto.CategoryDTO">
+        SELECT c.id,
+               c.category_name,
+               COUNT(a.id) AS article_count
+        FROM tb_category c
+                 LEFT JOIN (SELECT id, category_id FROM tb_article WHERE is_delete = 0 AND `status` = 1) a
+                           ON c.id = a.category_id
+        GROUP BY c.id
     </select>
 </mapper>
 

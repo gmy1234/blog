@@ -1,5 +1,6 @@
 package com.gmy.blog.controller;
 
+import com.gmy.blog.dto.user.UserAreaDTO;
 import com.gmy.blog.dto.user.UserBackDTO;
 import com.gmy.blog.service.UserAuthService;
 import com.gmy.blog.vo.ConditionVO;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author gmydl
@@ -39,5 +42,18 @@ public class UserAuthController {
     @GetMapping("/getAllUser")
     public Result<PageResult<UserBackDTO>> getAllUsers(ConditionVO condition) {
         return Result.ok(userAuthService.getAllUsers(condition));
+    }
+
+    /**
+     * 获取用户区域分布
+     *
+     * @param conditionVO 条件
+     * @return {@link Result<UserAreaDTO>} 用户区域分布
+     */
+    @ApiOperation(value = "获取用户区域分布")
+    @GetMapping("/area")
+    public Result<List<UserAreaDTO>> listUserAreas(ConditionVO conditionVO) {
+        List<UserAreaDTO> res = userAuthService.listUserAreas(conditionVO);
+        return Result.ok(res);
     }
 }

@@ -1,7 +1,10 @@
 package com.gmy.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gmy.blog.dto.UniqueViewDTO;
 import com.gmy.blog.entity.UniqueViewEntity;
+
+import java.util.List;
 
 
 /**
@@ -13,4 +16,10 @@ import com.gmy.blog.entity.UniqueViewEntity;
 public interface UniqueViewService extends IService<UniqueViewEntity> {
 
 
+    /**
+     * 获取7天用户量统计
+     *
+     * @return 用户量
+     */
+    List<UniqueViewDTO> listUniqueViews();
 }

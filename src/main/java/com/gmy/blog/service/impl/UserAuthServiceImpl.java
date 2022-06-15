@@ -12,6 +12,7 @@ import com.gmy.blog.dao.UserAuthDao;
 import com.gmy.blog.dao.UserInfoDao;
 import com.gmy.blog.dao.UserRoleDao;
 import com.gmy.blog.dto.EmailDTO;
+import com.gmy.blog.dto.user.UserAreaDTO;
 import com.gmy.blog.dto.user.UserBackDTO;
 import com.gmy.blog.dto.user.UserInfoDTO;
 import com.gmy.blog.dto.user.UserRoleDTO;
@@ -20,6 +21,7 @@ import com.gmy.blog.entity.UserInfoEntity;
 import com.gmy.blog.entity.UserRoleEntity;
 import com.gmy.blog.enums.LoginTypeEnum;
 import com.gmy.blog.enums.RoleEnum;
+import com.gmy.blog.enums.UserAreaTypeEnum;
 import com.gmy.blog.exception.BizException;
 import com.gmy.blog.service.RedisService;
 import com.gmy.blog.service.UserAuthService;
@@ -48,16 +50,13 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.gmy.blog.constant.CommonConst.DEFAULT_NICKNAME;
 import static com.gmy.blog.constant.MQPrefixConst.EMAIL_EXCHANGE;
 import static com.gmy.blog.constant.MQPrefixConst.EMAIL_ROUTING_KEY;
-import static com.gmy.blog.constant.RedisPrefixConst.CODE_EXPIRE_TIME;
-import static com.gmy.blog.constant.RedisPrefixConst.REGISTER_VERIFICATION_KEY;
+import static com.gmy.blog.constant.RedisPrefixConst.*;
 
 /**
  * 用户账号服务
@@ -239,6 +238,35 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
         redisService.del("login:" + userInfoId);
 
         return "注销成功";
+    }
+
+    @Override
+    public List<UserAreaDTO> listUserAreas(ConditionVO conditionVO) {
+        List<UserAreaDTO> userAreaDTOList = new ArrayList<>();
+        switch (Objects.requireNonNull(UserAreaTypeEnum.getUserAreaType(conditionVO.getType()))){
+            case USER:
+                Object userArea = redisService.get(USER_AREA);
+                if (Objects.nonNull(userArea)){
+                    userAreaDTOList = JSON.parseObject(userArea.toString(), List.class);
+                }
+                return userAreaDTOList;
+            // 访客
+            case VISITOR:
+                // 查询游客区域分布
+                Map<String, Object> visitorArea = redisService.hGetAll(VISITOR_AREA);
+                if (Objects.nonNull(visitorArea)){
+                    userAreaDTOList = visitorArea.entrySet().stream()
+                            .map(item -> UserAreaDTO.builder()
+                                    .name(item.getKey())
+                                    .value(Long.valueOf(item.getValue().toString()))
+                                    .build())
+                            .collect(Collectors.toList());
+                }
+                return userAreaDTOList;
+            default:
+                break;
+        }
+        return userAreaDTOList;
     }
 
 

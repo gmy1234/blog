@@ -1,6 +1,7 @@
 package com.gmy.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gmy.blog.dto.user.UserAreaDTO;
 import com.gmy.blog.dto.user.UserBackDTO;
 import com.gmy.blog.dto.user.UserInfoDTO;
 import com.gmy.blog.entity.UserAuthEntity;
@@ -52,4 +53,10 @@ public interface UserAuthService extends IService<UserAuthEntity> {
      */
     String  logout();
 
+    /**
+     * 获取用户的地区分布
+     * @param conditionVO 条件
+     * @return 地区分布
+     */
+    List<UserAreaDTO> listUserAreas(ConditionVO conditionVO);
 }

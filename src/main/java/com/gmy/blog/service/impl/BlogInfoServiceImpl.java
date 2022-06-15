@@ -2,17 +2,20 @@ package com.gmy.blog.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.gmy.blog.dao.ArticleDao;
-import com.gmy.blog.dao.CategoryDao;
-import com.gmy.blog.dao.TagDao;
-import com.gmy.blog.dao.WebsiteConfigDao;
-import com.gmy.blog.dto.BlogHomeInfoDTO;
+import com.gmy.blog.dao.*;
+import com.gmy.blog.dto.*;
+import com.gmy.blog.dto.article.ArticleRankDTO;
+import com.gmy.blog.dto.article.ArticleStatisticsDTO;
+import com.gmy.blog.dto.user.UserInfoDTO;
 import com.gmy.blog.entity.ArticleEntity;
 import com.gmy.blog.entity.WebsiteConfigEntity;
 import com.gmy.blog.service.BackgroundService;
 import com.gmy.blog.service.BlogInfoService;
 import com.gmy.blog.service.RedisService;
+import com.gmy.blog.service.UniqueViewService;
+import com.gmy.blog.util.BeanCopyUtils;
 import com.gmy.blog.util.IpUtils;
 import com.gmy.blog.vo.BackgroundVO;
 import com.gmy.blog.vo.WebsiteConfigVO;
@@ -26,10 +29,8 @@ import org.springframework.util.DigestUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.gmy.blog.constant.CommonConst.*;
 import static com.gmy.blog.constant.RedisPrefixConst.*;
@@ -66,6 +67,12 @@ public class BlogInfoServiceImpl implements BlogInfoService {
 
     @Autowired
     private BackgroundService backgroundService;
+
+    @Autowired
+    private UserInfoDao userInfoDao;
+
+    @Autowired
+    private UniqueViewService uniqueViewService;
 
     @Override
     public void reportVisitorInfo() {
@@ -117,7 +124,7 @@ public class BlogInfoServiceImpl implements BlogInfoService {
         // 查询网站配置
         WebsiteConfigVO websiteConfig = this.getWebsiteConfig();
 
-        // TODO:查询 页面信息
+        // 背景信息
         List<BackgroundVO> backgrounds = backgroundService.listBackground();
 
         // 封装
@@ -164,4 +171,74 @@ public class BlogInfoServiceImpl implements BlogInfoService {
         // 删除缓存
         redisService.del(WEBSITE_CONFIG);
     }
+
+    /**
+     * 查询文章排行
+     * @param articleMap 文章信息
+     * @return List<ArticleRankDTO>} 文章排行
+     */
+    private List<ArticleRankDTO> listArticleRank(Map<Object, Double> articleMap) {
+        // 提取文章id
+        List<Integer> articleIdList = new ArrayList<>(articleMap.size());
+        articleMap.forEach((key, value) -> articleIdList.add((Integer) key));
+        // 查询文章信息
+        return articleDao.selectList(new LambdaQueryWrapper<ArticleEntity>()
+                        .select(ArticleEntity::getId, ArticleEntity::getArticleTitle)
+                        .in(ArticleEntity::getId, articleIdList))
+                .stream().map(article -> ArticleRankDTO.builder()
+                        .articleTitle(article.getArticleTitle())
+                        .viewsCount(articleMap.get(article.getId()).intValue())
+                        .build())
+                .sorted(Comparator.comparingInt(ArticleRankDTO::getViewsCount).reversed())
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public BlogBackInfoDTO getBlogBasicInfo() {
+
+        // 查访问量
+        Object count = redisService.get(BLOG_VIEWS_COUNT);
+        String viewCount = Optional.ofNullable(count).orElse(0).toString();
+
+        // TODO：查询留言量
+
+        // 查询用户量
+        Integer userCount = Math.toIntExact(userInfoDao.selectCount(null));
+        // 查询文章量
+        Long articleCount = articleDao.selectCount(new LambdaQueryWrapper<ArticleEntity>()
+                .eq(ArticleEntity::getIsDelete, FALSE));
+        // 查询一周用户量
+        List<UniqueViewDTO> uniqueViewList =  uniqueViewService.listUniqueViews();
+        // 查询文章统计
+        List<ArticleStatisticsDTO> articleStatisticsList = articleDao.listArticleStatistics();
+        // 查询分类数据
+        List<CategoryDTO> categoryDTOList = categoryDao.listCategoryDTO();
+        // 查询标签数据
+        List<TagDTO> tagDTOList = BeanCopyUtils.copyList(tagDao.selectList(null), TagDTO.class);
+        // 查询redis访问量前五的文章
+        Map<Object, Double> articleMap = redisService.zReverseRangeWithScore(ARTICLE_VIEWS_COUNT, 0, 4);
+
+        // 封装
+        BlogBackInfoDTO blogBackInfoDTO = BlogBackInfoDTO.builder()
+                .articleCount(Math.toIntExact(articleCount))
+                .articleStatisticsList(articleStatisticsList)
+                .tagDTOList(tagDTOList)
+                .viewsCount(Integer.parseInt(viewCount))
+                .messageCount(0)
+                .userCount(userCount)
+                .categoryDTOList(categoryDTOList)
+                .uniqueViewDTOList(uniqueViewList)
+                .build();
+        if (CollectionUtils.isNotEmpty(articleMap)) {
+            // 查文章排行
+            List<ArticleRankDTO> articleRankDTOList = this.listArticleRank(articleMap);
+            blogBackInfoDTO.setArticleRankDTOList(articleRankDTOList);
+        }
+        return blogBackInfoDTO;
+    }
+
+
 }
+
+

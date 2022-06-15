@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gmy.blog.dto.article.ArticleBackDTO;
 import com.gmy.blog.dto.article.ArticleDTO;
 import com.gmy.blog.dto.article.ArticleHomeDTO;
+import com.gmy.blog.dto.article.ArticleStatisticsDTO;
 import com.gmy.blog.entity.ArticleEntity;
 import com.gmy.blog.vo.ConditionVO;
 import org.apache.ibatis.annotations.Param;
@@ -49,4 +50,12 @@ public interface ArticleDao extends BaseMapper<ArticleEntity> {
      * @return 文章信息
      */
     ArticleDTO getArticleById(Integer articleId);
+
+    /**
+     * 文章统计
+     *
+     * @return {@link List<ArticleStatisticsDTO>} 文章统计结果
+     */
+    List<ArticleStatisticsDTO> listArticleStatistics();
+
 }

@@ -1,5 +1,7 @@
 package com.gmy.blog.controller;
 
+import com.gmy.blog.dto.BlogBackInfoDTO;
+import com.gmy.blog.dto.BlogHomeInfoDTO;
 import com.gmy.blog.service.BlogInfoService;
 import com.gmy.blog.vo.Result;
 import com.gmy.blog.vo.WebsiteConfigVO;
@@ -22,6 +24,23 @@ public class BlogInfoController {
 
     @Autowired
     private BlogInfoService blogInfoService;
+
+
+
+    /**
+     * 获取后台博客信息
+     *
+     * @return {@link Result<BlogBackInfoDTO>} 博客信息
+     */
+    @ApiOperation(value = "查看博客信息")
+    @GetMapping("/basic/info")
+    public Result<BlogBackInfoDTO> getBlogBasicInfo() {
+        BlogBackInfoDTO res = blogInfoService.getBlogBasicInfo();
+
+        return Result.ok(res);
+    }
+
+
 
     /**
      * 获取网站配置

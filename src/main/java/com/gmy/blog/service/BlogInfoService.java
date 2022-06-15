@@ -1,5 +1,6 @@
 package com.gmy.blog.service;
 
+import com.gmy.blog.dto.BlogBackInfoDTO;
 import com.gmy.blog.dto.BlogHomeInfoDTO;
 import com.gmy.blog.vo.WebsiteConfigVO;
 
@@ -33,4 +34,10 @@ public interface BlogInfoService {
      * @param websiteConfigVO 网站信息
      */
     void updateWebsiteConfig(WebsiteConfigVO websiteConfigVO);
+
+    /**
+     * 获取博客后台信息
+     * @return 后台信息
+     */
+    BlogBackInfoDTO getBlogBasicInfo();
 }
