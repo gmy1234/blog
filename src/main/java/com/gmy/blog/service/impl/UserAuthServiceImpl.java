@@ -6,6 +6,7 @@ import cn.hutool.jwt.JWTUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gmy.blog.constant.RedisPrefixConst;
 import com.gmy.blog.dao.UserAuthDao;
@@ -41,6 +42,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -53,7 +55,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.gmy.blog.constant.CommonConst.DEFAULT_NICKNAME;
+import static com.gmy.blog.constant.CommonConst.*;
 import static com.gmy.blog.constant.MQPrefixConst.EMAIL_EXCHANGE;
 import static com.gmy.blog.constant.MQPrefixConst.EMAIL_ROUTING_KEY;
 import static com.gmy.blog.constant.RedisPrefixConst.*;
@@ -187,7 +189,7 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
                 new UsernamePasswordAuthenticationToken(userVo.getUsername(), userVo.getPassword());
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
         // 认证没有通过，抛出异常
-        if (Objects.isNull(authenticate)){
+        if (Objects.isNull(authenticate)) {
             throw new BizException("认证失败");
         }
         // 认证通过。
@@ -240,13 +242,40 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
         return "注销成功";
     }
 
+    /**
+     * 统计用户地区
+     */
+    @Scheduled(cron = "0 0 * * * ?")
+    public void statisticalUserArea() {
+        // 统计用户地域分布
+        Map<String, Long> userAreaMap = userAuthDao.selectList(new LambdaQueryWrapper<UserAuthEntity>().select(UserAuthEntity::getIpSource))
+                .stream()
+                .map(item -> {
+                    if (StringUtils.isNotBlank(item.getIpSource())) {
+                        return item.getIpSource().substring(0, 2)
+                                .replaceAll(PROVINCE, "")
+                                .replaceAll(CITY, "");
+                    }
+                    return UNKNOWN;
+                })
+                .collect(Collectors.groupingBy(item -> item, Collectors.counting()));
+        // 转换格式
+        List<UserAreaDTO> userAreaList = userAreaMap.entrySet().stream()
+                .map(item -> UserAreaDTO.builder()
+                        .name(item.getKey())
+                        .value(item.getValue())
+                        .build())
+                .collect(Collectors.toList());
+        redisService.set(USER_AREA, JSON.toJSONString(userAreaList));
+    }
+
     @Override
     public List<UserAreaDTO> listUserAreas(ConditionVO conditionVO) {
         List<UserAreaDTO> userAreaDTOList = new ArrayList<>();
-        switch (Objects.requireNonNull(UserAreaTypeEnum.getUserAreaType(conditionVO.getType()))){
+        switch (Objects.requireNonNull(UserAreaTypeEnum.getUserAreaType(conditionVO.getType()))) {
             case USER:
                 Object userArea = redisService.get(USER_AREA);
-                if (Objects.nonNull(userArea)){
+                if (Objects.nonNull(userArea)) {
                     userAreaDTOList = JSON.parseObject(userArea.toString(), List.class);
                 }
                 return userAreaDTOList;
@@ -254,7 +283,7 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
             case VISITOR:
                 // 查询游客区域分布
                 Map<String, Object> visitorArea = redisService.hGetAll(VISITOR_AREA);
-                if (Objects.nonNull(visitorArea)){
+                if (Objects.nonNull(visitorArea)) {
                     userAreaDTOList = visitorArea.entrySet().stream()
                             .map(item -> UserAreaDTO.builder()
                                     .name(item.getKey())
