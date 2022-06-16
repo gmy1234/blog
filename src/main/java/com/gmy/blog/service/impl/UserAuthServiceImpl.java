@@ -24,6 +24,7 @@ import com.gmy.blog.enums.LoginTypeEnum;
 import com.gmy.blog.enums.RoleEnum;
 import com.gmy.blog.enums.UserAreaTypeEnum;
 import com.gmy.blog.exception.BizException;
+import com.gmy.blog.service.BlogInfoService;
 import com.gmy.blog.service.RedisService;
 import com.gmy.blog.service.UserAuthService;
 import com.gmy.blog.util.BeanCopyUtils;
@@ -87,6 +88,9 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private BlogInfoService blogInfoService;
 
     @Override
     public PageResult<UserBackDTO> getAllUsers(ConditionVO condition) {
@@ -158,7 +162,8 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
         UserInfoEntity userInfo = UserInfoEntity.builder()
                 .email(userVo.getUsername())
                 .nickname(DEFAULT_NICKNAME + IdWorker.getId())
-                // TODO：等网站配置，然后设置默认头像
+                // 设置默认头像
+                .avatar(blogInfoService.getWebsiteConfig().getUserAvatar())
                 .avatar(null)
                 .build();
         userInfoDao.insert(userInfo);

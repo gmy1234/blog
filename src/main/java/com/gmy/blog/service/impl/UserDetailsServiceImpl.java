@@ -110,7 +110,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .nickname(userInfo.getNickname())
                 .avatar(userInfo.getAvatar())
                 .intro(userInfo.getIntro())
-                .webSite("webSite")
+                .webSite(userInfo.getWebSite())
                 .articleLikeSet(articleLikeSet)
                 .commentLikeSet(commentLikeSet)
                 .talkLikeSet(talkLikeSet)
@@ -122,6 +122,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .lastLoginTime(LocalDateTime.now(ZoneId.of(SHANGHAI.getZone())))
                 .build();
     }
-
 
 }
