@@ -52,7 +52,7 @@ public class statisticsUser {
     /**
      * 统计用户地区
      */
-    @Scheduled(cron = "0 0 * * * ?")
+    @Scheduled(cron = "0 30 * * * ?")
     public void statisticalUserArea() {
         // 统计用户地域分布
         Map<String, Long> userAreaMap = userAuthDao.selectList(new LambdaQueryWrapper<UserAuthEntity>().select(UserAuthEntity::getIpSource))
