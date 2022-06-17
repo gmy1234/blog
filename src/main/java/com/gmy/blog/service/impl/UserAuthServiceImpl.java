@@ -247,33 +247,6 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
         return "注销成功";
     }
 
-    /**
-     * 统计用户地区
-     */
-    @Scheduled(cron = "0 0 * * * ?")
-    public void statisticalUserArea() {
-        // 统计用户地域分布
-        Map<String, Long> userAreaMap = userAuthDao.selectList(new LambdaQueryWrapper<UserAuthEntity>().select(UserAuthEntity::getIpSource))
-                .stream()
-                .map(item -> {
-                    if (StringUtils.isNotBlank(item.getIpSource())) {
-                        return item.getIpSource().substring(0, 2)
-                                .replaceAll(PROVINCE, "")
-                                .replaceAll(CITY, "");
-                    }
-                    return UNKNOWN;
-                })
-                .collect(Collectors.groupingBy(item -> item, Collectors.counting()));
-        // 转换格式
-        List<UserAreaDTO> userAreaList = userAreaMap.entrySet().stream()
-                .map(item -> UserAreaDTO.builder()
-                        .name(item.getKey())
-                        .value(item.getValue())
-                        .build())
-                .collect(Collectors.toList());
-        redisService.set(USER_AREA, JSON.toJSONString(userAreaList));
-    }
-
     @Override
     public List<UserAreaDTO> listUserAreas(ConditionVO conditionVO) {
         List<UserAreaDTO> userAreaDTOList = new ArrayList<>();

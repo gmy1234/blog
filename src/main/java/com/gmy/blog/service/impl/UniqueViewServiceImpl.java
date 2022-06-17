@@ -36,8 +36,6 @@ import static com.gmy.blog.enums.ZoneEnum.SHANGHAI;
 public class UniqueViewServiceImpl extends ServiceImpl<UniqueViewDao, UniqueViewEntity> implements UniqueViewService {
 
     @Autowired
-    private RedisService redisService;
-    @Autowired
     private UniqueViewDao uniqueViewDao;
 
 
@@ -48,26 +46,4 @@ public class UniqueViewServiceImpl extends ServiceImpl<UniqueViewDao, UniqueView
         return uniqueViewDao.listUniqueViews(startTime, endTime);
     }
 
-    // 每天23点55分执行一次
-    @Scheduled(cron = " 0 0 0 * * ?", zone = "Asia/Shanghai")
-    public void saveUniqueView() {
-        // 获取每天用户量
-        Long count = redisService.sSize(UNIQUE_VISITOR);
-        // 获取昨天日期插入数据
-        UniqueViewEntity uniqueView = UniqueViewEntity.builder()
-                .createTime(LocalDateTimeUtil.offset(LocalDateTime.now(ZoneId.of(SHANGHAI.getZone())), -1, ChronoUnit.DAYS))
-                .viewsCount(Optional.of(count.intValue()).orElse(0))
-                .build();
-        uniqueViewDao.insert(uniqueView);
-    }
-
-    // 每天凌晨1点
-    @Scheduled(cron = " 0 2 0 * * ?", zone = "Asia/Shanghai")
-    public void clear() {
-        System.out.println("执行了定时任务删除redis用户访问量量：");
-        // 清空redis访客记录
-        redisService.del(UNIQUE_VISITOR);
-        // 清空redis游客区域统计
-        redisService.del(VISITOR_AREA);
-    }
 }
