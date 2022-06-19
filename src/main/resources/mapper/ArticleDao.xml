@@ -184,33 +184,29 @@
 
     <!-- 根据文章 ID 查询文章信息-->
     <select id="getArticleById" resultMap="articleResultMap">
-        SELECT
-            a.id,
-            article_cover,
-            article_title,
-            article_content,
-            a.type,
-            a.original_url,
-            a.create_time,
-            a.update_time,
-            a.category_id,
-            category_name,
-            t.id AS tag_id,
-            t.tag_name
-        FROM
-            tb_article a
-                JOIN tb_category c ON a.category_id = c.id
-                JOIN tb_article_tag atg ON a.id = atg.article_id
-                JOIN tb_tag t ON t.id = atg.tag_id
-        WHERE
-            a.id = #{articleId}
+        SELECT a.id,
+               article_cover,
+               article_title,
+               article_content,
+               a.type,
+               a.original_url,
+               a.create_time,
+               a.update_time,
+               a.category_id,
+               category_name,
+               t.id AS tag_id,
+               t.tag_name
+        FROM tb_article a
+                 JOIN tb_category c ON a.category_id = c.id
+                 JOIN tb_article_tag atg ON a.id = atg.article_id
+                 JOIN tb_tag t ON t.id = atg.tag_id
+        WHERE a.id = #{articleId}
           AND a.is_delete = 0
           AND a.status = 1
     </select>
 
     <select id="listArticleStatistics" resultType="com.gmy.blog.dto.article.ArticleStatisticsDTO">
-        SELECT
-            DATE_FORMAT( create_time, "%Y-%m-%d" ) AS date,
+        SELECT DATE_FORMAT(create_time, "%Y-%m-%d") AS date,
             COUNT( 1 ) AS count
         FROM
             tb_article
@@ -218,5 +214,57 @@
             date
         ORDER BY
             date DESC
+    </select>
+
+    <resultMap id="articlePreviewResultMap" type="com.gmy.blog.dto.article.ArticlePreviewDTO">
+        <id column="id" property="id"/>
+        <result column="article_cover" property="articleCover"/>
+        <result column="article_title" property="articleTitle"/>
+        <result column="create_time" property="createTime"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="category_name" property="categoryName"/>
+        <collection property="tagDTOList" ofType="com.gmy.blog.dto.TagDTO">
+            <id column="tag_id" property="id"/>
+            <result column="tag_name" property="tagName"/>
+        </collection>
+    </resultMap>
+
+    <select id="listByCategory" resultMap="articlePreviewResultMap">
+        SELECT
+        a.id,
+        article_cover,
+        article_title,
+        a.create_time,
+        a.category_id,
+        category_name,
+        t.id AS tag_id,
+        t.tag_name
+        FROM
+        (
+        SELECT
+        id,
+        article_cover,
+        article_title,
+        article_content,
+        create_time,
+        category_id
+        FROM
+        tb_article
+        <where>
+            <if test="condition.categoryId != null">
+                category_id = #{condition.categoryId}
+            </if>
+            <if test="condition.tagId != null">
+                id IN ( SELECT article_id FROM tb_article_tag WHERE tag_id = #{condition.tagId} )
+            </if>
+        </where>
+        AND is_delete = 0
+        AND status = 1
+        ORDER BY id DESC
+        LIMIT #{current}, #{size}
+        ) a
+        JOIN tb_category c ON a.category_id = c.id
+        JOIN tb_article_tag atg ON a.id = atg.article_id
+        JOIN tb_tag t ON t.id = atg.tag_id
     </select>
 </mapper>

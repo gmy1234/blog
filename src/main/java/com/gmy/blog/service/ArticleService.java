@@ -2,9 +2,11 @@ package com.gmy.blog.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gmy.blog.dto.CategoryDTO;
 import com.gmy.blog.dto.article.ArticleBackDTO;
 import com.gmy.blog.dto.article.ArticleDTO;
 import com.gmy.blog.dto.article.ArticleHomeDTO;
+import com.gmy.blog.dto.article.ArticlePreviewListDTO;
 import com.gmy.blog.entity.ArticleEntity;
 import com.gmy.blog.vo.*;
 
@@ -58,10 +60,10 @@ public interface ArticleService extends IService<ArticleEntity> {
     void phyDeleteArticles(DeleteVo articleIdList);
 
     /**
-     * 前台 获取 文章列表
-     * @return 文章列表
+     * 前台 获取 首页文章
+     * @return 首页文章
      */
-    List<ArticleHomeDTO> listArticle();
+    List<ArticleHomeDTO> listHomeArticle();
 
     /**
      * 通过文章ID获取前台文章信息
@@ -75,4 +77,17 @@ public interface ArticleService extends IService<ArticleEntity> {
      * @param articleId 文章ID
      */
     void saveArticleLike(Integer articleId);
+
+    /**
+     * 分类列表
+     * @return 分类
+     */
+    PageResult<CategoryDTO> listCategory();
+
+    /**
+     * 不同分类下的文章列表
+     * @param condition 条件
+     * @return
+     */
+    ArticlePreviewListDTO listByCategory(ConditionVO condition);
 }

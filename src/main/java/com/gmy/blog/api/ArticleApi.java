@@ -1,8 +1,12 @@
 package com.gmy.blog.api;
 
+import com.gmy.blog.dto.CategoryDTO;
 import com.gmy.blog.dto.article.ArticleDTO;
 import com.gmy.blog.dto.article.ArticleHomeDTO;
+import com.gmy.blog.dto.article.ArticlePreviewListDTO;
 import com.gmy.blog.service.ArticleService;
+import com.gmy.blog.vo.ConditionVO;
+import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.Result;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -26,13 +30,13 @@ public class ArticleApi {
     private ArticleService articleService;
 
     /**
-     * 查询文章列表
+     * 查询首页文章
      * @return 文章列表
      */
-    @ApiOperation(value = "查询文章列表")
-    @GetMapping("/list")
-    public Result<List<ArticleHomeDTO>> listArticle() {
-        List<ArticleHomeDTO> res = articleService.listArticle();
+    @ApiOperation(value = "查询首页文章")
+    @GetMapping("/homeList")
+    public Result<List<ArticleHomeDTO>> listHomeArticle() {
+        List<ArticleHomeDTO> res = articleService.listHomeArticle();
         return Result.ok(res);
     }
 
@@ -59,5 +63,30 @@ public class ArticleApi {
     public Result<?> saveArticleLike(@PathVariable("articleId") Integer articleId) {
         articleService.saveArticleLike(articleId);
         return Result.ok();
+    }
+
+    /**
+     * 文章分类列表
+     *
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "文章分类列表")
+    @GetMapping("/listCategory")
+    public Result<PageResult<CategoryDTO>> listCategory() {
+        PageResult<CategoryDTO> res = articleService.listCategory();
+        return Result.ok(res);
+    }
+
+    /**
+     * 根据条件查询文章
+     *
+     * @param condition 条件
+     * @return {@link Result<ArticlePreviewListDTO>} 文章列表
+     */
+    @ApiOperation(value = "根据条件查询文章")
+    @GetMapping("/listByCategory")
+    public Result<ArticlePreviewListDTO> listByCategory(ConditionVO condition) {
+        ArticlePreviewListDTO res = articleService.listByCategory(condition);
+        return Result.ok(res);
     }
 }

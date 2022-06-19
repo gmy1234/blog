@@ -2,15 +2,16 @@ package com.gmy.blog.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.gmy.blog.dao.ArticleDao;
 import com.gmy.blog.dao.ArticleTagDao;
 import com.gmy.blog.dao.CategoryDao;
 import com.gmy.blog.dao.TagDao;
-import com.gmy.blog.dto.article.ArticleBackDTO;
-import com.gmy.blog.dto.article.ArticleDTO;
-import com.gmy.blog.dto.article.ArticleHomeDTO;
+import com.gmy.blog.dto.CategoryDTO;
+import com.gmy.blog.dto.TagDTO;
+import com.gmy.blog.dto.article.*;
 import com.gmy.blog.entity.ArticleEntity;
 import com.gmy.blog.entity.ArticleTagEntity;
 import com.gmy.blog.entity.CategoryEntity;
@@ -258,7 +259,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     }
 
     @Override
-    public List<ArticleHomeDTO> listArticle() {
+    public List<ArticleHomeDTO> listHomeArticle() {
         return articleDao.listArticle(PageUtils.getLimitCurrent(), PageUtils.getSize());
     }
 
@@ -324,6 +325,69 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             redisService.hIncr(ARTICLE_LIKE_COUNT, articleId.toString(), 1L);
         }
 
+    }
+
+    @Override
+    public PageResult<CategoryDTO> listCategory() {
+        PageResult<CategoryDTO> resData = new PageResult<>();
+        resData.setCount(Math.toIntExact(categoryDao.selectCount(null)));
+        resData.setRecordList(categoryDao.listCategoryDTO());
+        return resData;
+    }
+
+    @Override
+    public ArticlePreviewListDTO listByCategory(ConditionVO condition) {
+        // 查询文章 SQL
+        // List<ArticlePreviewDTO> articlePreviewDTOList = articleDao.listByCategory(PageUtils.getLimitCurrent(), PageUtils.getSize(), condition);
+        // 代码
+        Page<ArticleEntity> page = new Page<>(PageUtils.getLimitCurrent(), PageUtils.getSize());
+        LambdaQueryWrapper<ArticleEntity> wrapper = new LambdaQueryWrapper<>();
+
+        if (condition.getCategoryId() != null){
+            wrapper.eq(ArticleEntity::getCategoryId, condition.getCategoryId());
+        }
+        List<ArticleEntity> records = articleDao.selectPage(page, wrapper).getRecords();
+        // 封装
+        List<ArticlePreviewDTO> articlePreviewDTOList = records.stream().map(item -> {
+            // 获取文章的ID
+            Integer articleId = item.getId();
+            // 通过文章ID 获取 标签ID集合
+            // 每个文章里的多个标签ID集合
+            List<Integer> tagIDs = articleTagDao.selectList(new LambdaQueryWrapper<ArticleTagEntity>()
+                            .select(ArticleTagEntity::getTagId)
+                            .eq(ArticleTagEntity::getArticleId, articleId))
+                    .stream().map(ArticleTagEntity::getTagId).distinct().collect(Collectors.toList());// 去重
+
+            // 标签IDs
+            List<TagEntity> tagEntities = tagDao.selectList(new LambdaQueryWrapper<TagEntity>()
+                    .in(TagEntity::getId, tagIDs));
+            // 转换成 List<TagDTO>
+            List<TagDTO> tagDTOs = BeanCopyUtils.copyList(tagEntities, TagDTO.class);
+            // 转换成 ArticlePreviewDTO
+            ArticlePreviewDTO articlePreviewDTO = BeanCopyUtils.copyObject(item, ArticlePreviewDTO.class);
+            // 获取每个文章到标签名和标签ID，封装到tagDTO里
+            articlePreviewDTO.setTagDTOList(tagDTOs);
+            return articlePreviewDTO;
+        }).collect(Collectors.toList());
+
+
+        // 搜索条件对应名(标签或分类名)
+        String name;
+        if (Objects.nonNull(condition.getCategoryId())){
+            name = categoryDao.selectOne(new LambdaQueryWrapper<CategoryEntity>()
+                            .select(CategoryEntity::getCategoryName)
+                            .eq(CategoryEntity::getId, condition.getCategoryId()))
+                    .getCategoryName();
+        }else {
+            name = tagService.getOne(new LambdaQueryWrapper<TagEntity>()
+                            .select(TagEntity::getTagName)
+                            .eq(TagEntity::getId, condition.getTagId()))
+                    .getTagName();
+        }
+        return ArticlePreviewListDTO.builder()
+                .articlePreviewDTOList(articlePreviewDTOList)
+                .name(name)
+                .build();
     }
 
 }
