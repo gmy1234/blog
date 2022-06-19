@@ -59,4 +59,10 @@ public interface UserAuthService extends IService<UserAuthEntity> {
      * @return 地区分布
      */
     List<UserAreaDTO> listUserAreas(ConditionVO conditionVO);
+
+    /**
+     * 重置用户密码
+     * @param userVO 用户信息
+     */
+    void resetPassword(UserVO userVO);
 }

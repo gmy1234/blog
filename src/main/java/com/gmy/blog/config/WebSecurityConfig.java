@@ -79,6 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/user/login").anonymous() // anonymous() 匿名状态可访问，已经登陆状态不能访问。
                 .antMatchers("/user/code").anonymous() // permitAll() 无论是否登陆，都可以访问。
+                .antMatchers("/user/resetPassword").anonymous()
                 .antMatchers("/wallpaper/**").permitAll() // 壁纸开放
                 .antMatchers("/blog/**").permitAll()
                 .antMatchers("/article/**").permitAll()

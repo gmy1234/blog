@@ -83,7 +83,6 @@ public class statisticsUser {
     // 每天0点0分执行一次
     @Scheduled(cron = " 0 0 0 * * ?", zone = "Asia/Shanghai")
     public void saveUniqueView() {
-        System.out.println("统计用户访问量");
         // 获取每天用户量
         Long count = redisService.sSize(UNIQUE_VISITOR);
         // 获取昨天日期插入数据

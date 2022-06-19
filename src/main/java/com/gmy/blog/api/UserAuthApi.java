@@ -77,7 +77,20 @@ public class UserAuthApi {
         return Result.ok("hello");
     }
 
+    /**
+     * 用户重置密码
+     *
+     * @param userVO 用户登陆信息
+     * @return {@link Result<>}
+     */
+    @PostMapping("/resetPassword")
+    public Result<?> resetPassword(@RequestBody UserVO userVO) {
+        userAuthService.resetPassword(userVO);
+        return Result.ok();
+    }
+
     @GetMapping("/logout")
+    @PreAuthorize(value = "hasAuthority('user')")
     public Result<String > logout() {
 
         return Result.ok(userAuthService.logout());
