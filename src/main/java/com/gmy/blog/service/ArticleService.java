@@ -89,13 +89,13 @@ public interface ArticleService extends IService<ArticleEntity> {
     /**
      * 不同分类下的文章列表
      * @param condition 条件
-     * @return
+     * @return 文章集合
      */
     ArticlePreviewListDTO listByCategoryOrTag(ConditionVO condition);
 
     /**
      * 获取所有标签
-     * @return
+     * @return 标签集合
      */
     PageResult<TagEntity> listTag();
 }
