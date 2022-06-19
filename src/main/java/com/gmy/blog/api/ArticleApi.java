@@ -1,9 +1,11 @@
 package com.gmy.blog.api;
 
 import com.gmy.blog.dto.CategoryDTO;
+import com.gmy.blog.dto.TagDTO;
 import com.gmy.blog.dto.article.ArticleDTO;
 import com.gmy.blog.dto.article.ArticleHomeDTO;
 import com.gmy.blog.dto.article.ArticlePreviewListDTO;
+import com.gmy.blog.entity.TagEntity;
 import com.gmy.blog.service.ArticleService;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
@@ -84,9 +86,23 @@ public class ArticleApi {
      * @return {@link Result<ArticlePreviewListDTO>} 文章列表
      */
     @ApiOperation(value = "根据条件查询文章")
-    @GetMapping("/listByCategory")
-    public Result<ArticlePreviewListDTO> listByCategory(ConditionVO condition) {
-        ArticlePreviewListDTO res = articleService.listByCategory(condition);
+    @GetMapping("/listByCategoryOrTag")
+    public Result<ArticlePreviewListDTO> listByCategoryOrTag(ConditionVO condition) {
+        ArticlePreviewListDTO res = articleService.listByCategoryOrTag(condition);
         return Result.ok(res);
     }
+
+
+    /**
+     * 标签列表
+     *
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "标签列表")
+    @GetMapping("/listTag")
+    public Result<PageResult<TagEntity>> listTag() {
+        PageResult<TagEntity> res = articleService.listTag();
+        return Result.ok(res);
+    }
+
 }

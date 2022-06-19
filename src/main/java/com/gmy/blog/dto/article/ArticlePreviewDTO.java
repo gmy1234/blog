@@ -48,6 +48,13 @@ public class ArticlePreviewDTO {
      */
     private Integer categoryId;
 
+
+    /**
+     * 分类名称
+     */
+    private String categoryName;
+
+
     /**
      * 文章标签
      */

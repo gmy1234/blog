@@ -3,11 +3,13 @@ package com.gmy.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gmy.blog.dto.CategoryDTO;
+import com.gmy.blog.dto.TagDTO;
 import com.gmy.blog.dto.article.ArticleBackDTO;
 import com.gmy.blog.dto.article.ArticleDTO;
 import com.gmy.blog.dto.article.ArticleHomeDTO;
 import com.gmy.blog.dto.article.ArticlePreviewListDTO;
 import com.gmy.blog.entity.ArticleEntity;
+import com.gmy.blog.entity.TagEntity;
 import com.gmy.blog.vo.*;
 
 import java.util.List;
@@ -89,5 +91,11 @@ public interface ArticleService extends IService<ArticleEntity> {
      * @param condition 条件
      * @return
      */
-    ArticlePreviewListDTO listByCategory(ConditionVO condition);
+    ArticlePreviewListDTO listByCategoryOrTag(ConditionVO condition);
+
+    /**
+     * 获取所有标签
+     * @return
+     */
+    PageResult<TagEntity> listTag();
 }

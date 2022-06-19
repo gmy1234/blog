@@ -335,36 +335,77 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         return resData;
     }
 
+    /**
+     * 通过文章 ID 获取 相关联的标签的信息
+     *
+     * @param articleId 文章 ID
+     * @return 标签信息
+     */
+    private List<TagEntity> getTagInfoByArticleId(Integer articleId){
+        // 通过文章ID 获取 标签ID集合，通过stream去重
+        List<Integer> tagIDs = articleTagDao.selectList(new LambdaQueryWrapper<ArticleTagEntity>()
+                        .eq(ArticleTagEntity::getArticleId, articleId))
+                .stream().map(ArticleTagEntity::getTagId).distinct().collect(Collectors.toList());// 去重
+
+        // 通过标签ID查询出标签实体的信息
+        return tagDao.selectList(new LambdaQueryWrapper<TagEntity>()
+                .in(TagEntity::getId, tagIDs));
+    }
+
     @Override
-    public ArticlePreviewListDTO listByCategory(ConditionVO condition) {
+    public ArticlePreviewListDTO listByCategoryOrTag(ConditionVO condition) {
         // 查询文章 SQL
         // List<ArticlePreviewDTO> articlePreviewDTOList = articleDao.listByCategory(PageUtils.getLimitCurrent(), PageUtils.getSize(), condition);
-        // 代码
+
+        // 分页
         Page<ArticleEntity> page = new Page<>(PageUtils.getLimitCurrent(), PageUtils.getSize());
+        // 查询文章的条件
         LambdaQueryWrapper<ArticleEntity> wrapper = new LambdaQueryWrapper<>();
+        // 文章信息
+        List<ArticleEntity> records;
+        // 待封装的文章信息
+        List<ArticlePreviewDTO> articlePreviewDTOList;
 
+        // 分类下的文章列表
         if (condition.getCategoryId() != null){
+            // 获取分类 ID 为此的文章
             wrapper.eq(ArticleEntity::getCategoryId, condition.getCategoryId());
-        }
-        List<ArticleEntity> records = articleDao.selectPage(page, wrapper).getRecords();
-        // 封装
-        List<ArticlePreviewDTO> articlePreviewDTOList = records.stream().map(item -> {
-            // 获取文章的ID
-            Integer articleId = item.getId();
-            // 通过文章ID 获取 标签ID集合
-            // 每个文章里的多个标签ID集合
-            List<Integer> tagIDs = articleTagDao.selectList(new LambdaQueryWrapper<ArticleTagEntity>()
-                            .select(ArticleTagEntity::getTagId)
-                            .eq(ArticleTagEntity::getArticleId, articleId))
-                    .stream().map(ArticleTagEntity::getTagId).distinct().collect(Collectors.toList());// 去重
+        }else { // 标签下的文章列表
+            Integer tagId = condition.getTagId();
+            // 获取带有该标签的文章 ID
+            List<Integer> articleIds = articleTagDao.selectList(new LambdaQueryWrapper<ArticleTagEntity>()
+                            .eq(ArticleTagEntity::getTagId, tagId))
+                    .stream()
+                    .distinct()
+                    .map(ArticleTagEntity::getArticleId)
+                    .collect(Collectors.toList());
 
-            // 标签IDs
-            List<TagEntity> tagEntities = tagDao.selectList(new LambdaQueryWrapper<TagEntity>()
-                    .in(TagEntity::getId, tagIDs));
-            // 转换成 List<TagDTO>
+            // 获取含有该标签的文章
+            wrapper.in(ArticleEntity::getId, articleIds);
+        }
+        // 分页查询文章
+        records = articleDao.selectPage(page, wrapper).getRecords();
+
+        // 封装
+        articlePreviewDTOList = records.stream().map(item -> {
+            // 获取文章的 ID
+            Integer articleId = item.getId();
+            // 获取文章的分类 ID
+            Integer categoryId = item.getCategoryId();
+            // 通过分类 ID 获取分类名称
+            CategoryEntity categoryName = categoryDao.selectOne(new LambdaQueryWrapper<CategoryEntity>()
+                    .select(CategoryEntity::getCategoryName)
+                    .eq(CategoryEntity::getId, categoryId));
+
+            List<TagEntity> tagEntities = this.getTagInfoByArticleId(articleId);
+            // 将标签实体信息转换成 List<TagDTO>
             List<TagDTO> tagDTOs = BeanCopyUtils.copyList(tagEntities, TagDTO.class);
+
+            // 封装
             // 转换成 ArticlePreviewDTO
             ArticlePreviewDTO articlePreviewDTO = BeanCopyUtils.copyObject(item, ArticlePreviewDTO.class);
+            // 封装分类名称
+            articlePreviewDTO.setCategoryName(categoryName.getCategoryName());
             // 获取每个文章到标签名和标签ID，封装到tagDTO里
             articlePreviewDTO.setTagDTOList(tagDTOs);
             return articlePreviewDTO;
@@ -388,6 +429,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 .articlePreviewDTOList(articlePreviewDTOList)
                 .name(name)
                 .build();
+    }
+
+    @Override
+    public PageResult<TagEntity> listTag() {
+        // 查询所有的 tag
+        List<TagEntity> tagEntities = tagDao.selectList(null);
+        return new PageResult<>(tagEntities, tagEntities.size());
     }
 
 }
