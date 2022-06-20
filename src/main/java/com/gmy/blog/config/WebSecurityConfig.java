@@ -81,8 +81,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/code").anonymous() // permitAll() 无论是否登陆，都可以访问。
                 .antMatchers("/user/resetPassword").anonymous()
                 .antMatchers("/wallpaper/**").permitAll() // 壁纸开放
-                .antMatchers("/blog/**").permitAll()
-                .antMatchers("/article/**").permitAll()
+                .antMatchers("/blog/**").permitAll() // 博客网站模块
+                .antMatchers("/article/**").permitAll() // 文章模块
+                .antMatchers("/comment/getComments").permitAll() // 评论模块
                 .antMatchers("/admin/user/login").anonymous() // 设置后台登陆过滤
                 .antMatchers("/admin/user/info").permitAll()
                 .antMatchers("/admin/upload/articles/images").permitAll() // 放行上传文章封面，特殊
