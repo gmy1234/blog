@@ -1,7 +1,10 @@
 package com.gmy.blog.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.gmy.blog.dto.CommentBackDTO;
 import com.gmy.blog.entity.CommentEntity;
+import com.gmy.blog.vo.ConditionVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,5 +21,21 @@ import java.util.List;
 public interface CommentDao extends BaseMapper<CommentEntity> {
 
 
+    /**
+     * 统计后台评论数量
+     *
+     * @param condition 条件
+     * @return 评论数量
+     */
+    Integer countCommentDTO(@Param("condition") ConditionVO condition);
+
+    /**
+     * 分页统计后台评论数量
+     * @param current   页码
+     * @param size      大小
+     * @param condition 条件
+     * @return 评论集合
+     */
+    List<CommentBackDTO> listCommentBackDTO(@Param("current") Long current, @Param("size") Long size, @Param("condition") ConditionVO condition);
 
 }
