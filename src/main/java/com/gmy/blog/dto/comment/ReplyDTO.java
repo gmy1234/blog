@@ -1,4 +1,4 @@
-package com.gmy.blog.dto;
+package com.gmy.blog.dto.comment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,25 +9,30 @@ import java.time.LocalDateTime;
 
 /**
  * @author gmydl
- * @title: CommentBackDTO
+ * @title: ReplyDTO
  * @projectName blog-api
- * @description: TODO
- * @date 2022/6/20 10:44
+ * @description: 回复列表
+ * @date 2022/6/20 15:34
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentBackDTO {
+public class ReplyDTO {
     /**
-     * id
+     * 评论id
      */
     private Integer id;
 
     /**
-     * 用户头像
+     * 父评论id
      */
-    private String avatar;
+    private Integer parentId;
+
+    /**
+     * 用户id
+     */
+    private Integer userId;
 
     /**
      * 用户昵称
@@ -35,14 +40,29 @@ public class CommentBackDTO {
     private String nickname;
 
     /**
+     * 用户头像
+     */
+    private String avatar;
+
+    /**
+     * 个人网站
+     */
+    private String webSite;
+
+    /**
+     * 被回复用户id
+     */
+    private Integer replyUserId;
+
+    /**
      * 被回复用户昵称
      */
     private String replyNickname;
 
     /**
-     * 文章标题
+     * 被回复个人网站
      */
-    private String articleTitle;
+    private String replyWebSite;
 
     /**
      * 评论内容
@@ -50,17 +70,12 @@ public class CommentBackDTO {
     private String commentContent;
 
     /**
-     * 评论类型
+     * 点赞数
      */
-    private Integer type;
+    private Integer likeCount;
 
     /**
-     * 是否审核
-     */
-    private Integer isReview;
-
-    /**
-     * 发表时间
+     * 评论时间
      */
     private LocalDateTime createTime;
 }

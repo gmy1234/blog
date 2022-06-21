@@ -24,7 +24,7 @@
 
 
 
-    <select id="listCommentBackDTO" resultType="com.gmy.blog.dto.CommentBackDTO">
+    <select id="listCommentBackDTO" resultType="com.gmy.blog.dto.comment.CommentBackDTO">
         SELECT
         c.id,
         u.avatar,
@@ -58,7 +58,7 @@
 
 
 
-    <select id="getComments" resultType="com.gmy.blog.dto.CommentDTO">
+    <select id="getComments" resultType="com.gmy.blog.dto.comment.CommentDTO">
         SELECT
             c.id,
             c.user_id,
@@ -84,5 +84,52 @@
         ORDER BY
         c.id DESC
         LIMIT #{current}, #{size}
+    </select>
+
+    <select id="listReplies" resultType="com.gmy.blog.dto.comment.ReplyDTO">
+        SELECT
+            *
+        FROM
+        (
+            SELECT
+                c.user_id,
+                u.nickname,
+                u.avatar,
+                u.web_site,
+                c.reply_user_id,
+                r.nickname AS reply_nickname,
+                r.web_site AS reply_web_site,
+                c.id,
+                c.parent_id,
+                c.comment_content,
+                c.create_time,
+                row_number () over ( PARTITION BY parent_id ORDER BY create_time ASC ) row_num
+            FROM
+                tb_comment c
+            JOIN tb_user_info u ON c.user_id = u.id
+            JOIN tb_user_info r ON c.reply_user_id = r.id
+            WHERE c.is_review = 1
+            AND parent_id IN
+            (
+                <foreach collection="commentParentId" item="commentId" separator=",">
+                    #{commentId}
+                </foreach>
+            )
+        ) t
+        WHERE 4 > row_num
+    </select>
+    <select id="listReplyCountByCommentId" resultType="com.gmy.blog.dto.comment.ReplyCountDTO">
+        SELECT
+            parent_id as comment_id,
+            count(1) AS reply_count
+        FROM
+            tb_comment
+        WHERE is_review = 1
+        AND parent_id IN
+        <foreach open="(" collection="commentParentId" item="commentId" separator="," close=")">
+            #{commentId}
+        </foreach>
+        GROUP BY
+        parent_id
     </select>
 </mapper>

@@ -1,8 +1,10 @@
 package com.gmy.blog.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.gmy.blog.dto.CommentBackDTO;
-import com.gmy.blog.dto.CommentDTO;
+import com.gmy.blog.dto.comment.CommentBackDTO;
+import com.gmy.blog.dto.comment.CommentDTO;
+import com.gmy.blog.dto.comment.ReplyCountDTO;
+import com.gmy.blog.dto.comment.ReplyDTO;
 import com.gmy.blog.entity.CommentEntity;
 import com.gmy.blog.vo.CommentVO;
 import com.gmy.blog.vo.ConditionVO;
@@ -53,4 +55,19 @@ public interface CommentDao extends BaseMapper<CommentEntity> {
     List<CommentDTO> getComments(@Param("current") Long current,
                                  @Param("size") Long size,
                                  @Param("commentVO") CommentVO commentVO);
+
+    /**
+     * 根据父评论 ID 获取回复的信息
+     * @param commentParentId 父评论ID集合
+     * @return 回复的集合
+     */
+    List<ReplyDTO> listReplies(@Param("commentParentId") List<Integer> commentParentId);
+
+    /**
+     * 根据评论id查询回复总量
+     *
+     * @param commentParentId 评论 id 集合
+     * @return 回复数量
+     */
+    List<ReplyCountDTO> listReplyCountByCommentId(@Param("commentParentId") List<Integer> commentParentId);
 }

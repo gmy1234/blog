@@ -1,16 +1,16 @@
 package com.gmy.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gmy.blog.dao.ArticleDao;
 import com.gmy.blog.dao.CommentDao;
 import com.gmy.blog.dao.UserInfoDao;
-import com.gmy.blog.dto.CommentBackDTO;
-import com.gmy.blog.dto.CommentDTO;
+import com.gmy.blog.dto.comment.CommentBackDTO;
+import com.gmy.blog.dto.comment.CommentDTO;
+import com.gmy.blog.dto.comment.ReplyCountDTO;
+import com.gmy.blog.dto.comment.ReplyDTO;
 import com.gmy.blog.entity.CommentEntity;
-import com.gmy.blog.entity.UserAuthEntity;
-import com.gmy.blog.entity.UserInfoEntity;
 import com.gmy.blog.service.BlogInfoService;
 import com.gmy.blog.service.CommentService;
 import com.gmy.blog.service.RedisService;
@@ -99,17 +99,37 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         }
         // 分页查询父评论数据
         List<CommentDTO> commentDTOList = commentDao.getComments(PageUtils.getLimitCurrent(), PageUtils.getSize(), commentVO);
+        if (CollectionUtils.isEmpty(commentDTOList)) {
+            return new PageResult<>();
+        }
+        // 查询 redis 里的评论点赞数据
+        Map<String, Object> likeCountMap = redisService.hGetAll(COMMENT_LIKE_COUNT);
 
         // TODO:查询每个父评论的回复评论
-
-        // 查询redis的评论点赞数据
-        Map<String, Object> likeCountMap = redisService.hGetAll(COMMENT_LIKE_COUNT);
+        // 1、提取父评论 ID
+        List<Integer> commentParentId = commentDTOList.stream()
+                .map(CommentDTO::getId)
+                .collect(Collectors.toList());
+        // 2、根据父评论ID，获取回复的数据
+        List<ReplyDTO> replyDTOList =  commentDao.listReplies(commentParentId);
+        // 3、封装回复点赞量
+        replyDTOList.forEach(item ->{
+            item.setLikeCount((Integer) likeCountMap.get(item.getId().toString()));
+        });
+        // 4、根据评论 id 把回复数据分组 parentID -> 父评论下的回复
+        Map<Integer, List<ReplyDTO>> replyMap = replyDTOList.stream()
+                .collect(Collectors.groupingBy(ReplyDTO::getParentId));
+        // 5、根据评论 id 查询回复量
+        List<ReplyCountDTO> replyCount = commentDao.listReplyCountByCommentId(commentParentId);
+        Map<Integer, Integer> replyCountMap = replyCount.stream().
+                collect(Collectors.toMap(ReplyCountDTO::getCommentId, ReplyCountDTO::getReplyCount));
 
         commentDTOList.forEach(item -> {
             item.setLikeCount((Integer) likeCountMap.get(item.getId().toString()));
-            // TODO: 评论回复情况
-            // item.setReplyDTOList(replyMap.get(item.getId()));
-            // item.setReplyCount(replyCountMap.get(item.getId()));
+            // 封装每个评论下的回复
+            item.setReplyDTOList(replyMap.get(item.getId()));
+            // 封装每个评论下的回复数量
+            item.setReplyCount(replyCountMap.get(item.getId()));
         });
         return new PageResult<>(commentDTOList, Math.toIntExact(commentCount));
     }

@@ -1,6 +1,6 @@
 package com.gmy.blog.api;
 
-import com.gmy.blog.dto.CommentDTO;
+import com.gmy.blog.dto.comment.CommentDTO;
 import com.gmy.blog.service.CommentService;
 import com.gmy.blog.vo.CommentVO;
 import com.gmy.blog.vo.PageResult;

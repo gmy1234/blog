@@ -1,8 +1,8 @@
 package com.gmy.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.gmy.blog.dto.CommentBackDTO;
-import com.gmy.blog.dto.CommentDTO;
+import com.gmy.blog.dto.comment.CommentBackDTO;
+import com.gmy.blog.dto.comment.CommentDTO;
 import com.gmy.blog.entity.CommentEntity;
 import com.gmy.blog.vo.CommentVO;
 import com.gmy.blog.vo.ConditionVO;

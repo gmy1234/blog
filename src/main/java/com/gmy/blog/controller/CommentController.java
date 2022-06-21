@@ -1,7 +1,6 @@
 package com.gmy.blog.controller;
 
-import com.gmy.blog.annotation.OptLog;
-import com.gmy.blog.dto.CommentBackDTO;
+import com.gmy.blog.dto.comment.CommentBackDTO;
 import com.gmy.blog.service.CommentService;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;

@@ -1,4 +1,4 @@
-package com.gmy.blog.dto;
+package com.gmy.blog.dto.comment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
