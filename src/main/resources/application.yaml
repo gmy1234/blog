@@ -10,7 +10,7 @@ server:
 spring:
   profiles:
     # 环境 dev|test|prod
-    active: dev
+    active: prod
   devtools:
     restart:
       enabled: false

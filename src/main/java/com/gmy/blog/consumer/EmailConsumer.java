@@ -1,10 +1,8 @@
 package com.gmy.blog.consumer;
 
-import com.alibaba.fastjson.JSON;
 import com.gmy.blog.constant.MQPrefixConst;
 import com.gmy.blog.dto.EmailDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-@PropertySource("classpath:/application-dev.yaml" ) // 指定配置文件，用@Value来获取配置文件中的值
+@PropertySource("classpath:/application-prod.yaml") // 指定配置文件，用@Value来获取配置文件中的值
 public class EmailConsumer {
 
     /**
