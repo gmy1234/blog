@@ -36,4 +36,10 @@ public interface CommentService extends IService<CommentEntity> {
      * @return 评论
      */
     PageResult<CommentDTO> getComments(CommentVO commentVO);
+
+    /**
+     * 保存评论
+     * @param commentVO 评论信息
+     */
+    void saveComment(CommentVO commentVO);
 }

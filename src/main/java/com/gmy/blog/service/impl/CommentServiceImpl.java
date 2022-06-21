@@ -14,6 +14,8 @@ import com.gmy.blog.entity.UserInfoEntity;
 import com.gmy.blog.service.BlogInfoService;
 import com.gmy.blog.service.CommentService;
 import com.gmy.blog.service.RedisService;
+import com.gmy.blog.util.HTMLUtils;
+import com.gmy.blog.util.UserUtils;
 import com.gmy.blog.vo.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +24,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import static com.gmy.blog.constant.CommonConst.FALSE;
 import static com.gmy.blog.constant.CommonConst.TRUE;
 
 /**
@@ -98,5 +102,40 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
 
 
         return new PageResult<>(commentDTOList, Math.toIntExact(commentCount));
+    }
+
+
+    /**
+     * 通知评论用户
+     */
+    private void notice(CommentEntity comment){
+        // TODO 评论通知
+
+    }
+
+
+    @Override
+    public void saveComment(CommentVO commentVO) {
+        // 判断是否需要审核
+        WebsiteConfigVO websiteConfig = blogInfoService.getWebsiteConfig();
+        Integer isReview = websiteConfig.getIsCommentReview();
+
+        // 过滤标签
+        commentVO.setCommentContent(HTMLUtils.filter(commentVO.getCommentContent()));
+        CommentEntity comment = CommentEntity.builder()
+                .userId(UserUtils.getLoginUser().getUserInfoId())
+                .replyUserId(commentVO.getReplyUserId())
+                .topicId(commentVO.getTopicId())
+                .commentContent(commentVO.getCommentContent())
+                .parentId(commentVO.getParentId())
+                .type(commentVO.getType())
+                .isReview(isReview == TRUE ? FALSE : TRUE)
+                .build();
+        commentDao.insert(comment);
+
+        // 判断是否开启邮箱通知,通知用户
+        if (websiteConfig.getIsEmailNotice().equals(TRUE)) {
+            CompletableFuture.runAsync(() -> notice(comment));
+        }
     }
 }

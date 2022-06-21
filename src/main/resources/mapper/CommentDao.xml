@@ -72,15 +72,15 @@
             LEFT JOIN tb_user_info ui ON ui.id = c.user_id
             <where>
                 <if test="commentVO.topicId != null">
-                    topic_id = #{commentVO.topicId}
+                    c.topic_id = #{commentVO.topicId}
                 </if>
                 AND type = #{commentVO.type}
                 AND c.is_review = 1
-                AND parent_id IS NULL
+                AND c.parent_id IS NULL
+                AND c.is_review = 1
+                AND c.is_delete = 0
+                AND c.parent_id IS NULL
             </where>
-            c.is_review = 1
-          AND c.is_delete = 0
-          AND c.parent_id = NULL
         ORDER BY
         c.id DESC
         LIMIT #{current}, #{size}
