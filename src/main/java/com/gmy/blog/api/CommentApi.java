@@ -52,4 +52,17 @@ public class CommentApi {
         commentService.saveComment(commentVO);
         return Result.ok();
     }
+
+    /**
+     * 点赞评论
+     *
+     * @param commentId 评论信息
+     * @return {@link Result<CommentDTO>}
+     */
+    @ApiOperation(value = "点赞评论")
+    @PostMapping("/{commentId}/like")
+    public Result<?> likeComment(@PathVariable("commentId") Integer commentId) {
+        commentService.likeComment(commentId);
+        return Result.ok();
+    }
 }

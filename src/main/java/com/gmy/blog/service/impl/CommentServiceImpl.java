@@ -23,12 +23,15 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static com.gmy.blog.constant.CommonConst.FALSE;
 import static com.gmy.blog.constant.CommonConst.TRUE;
+import static com.gmy.blog.constant.RedisPrefixConst.COMMENT_LIKE_COUNT;
+import static com.gmy.blog.constant.RedisPrefixConst.COMMENT_USER_LIKE;
 
 /**
  * @author gmydl
@@ -99,8 +102,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
 
         // TODO:查询每个父评论的回复评论
 
+        // 查询redis的评论点赞数据
+        Map<String, Object> likeCountMap = redisService.hGetAll(COMMENT_LIKE_COUNT);
 
-
+        commentDTOList.forEach(item -> {
+            item.setLikeCount((Integer) likeCountMap.get(item.getId().toString()));
+            // TODO: 评论回复情况
+            // item.setReplyDTOList(replyMap.get(item.getId()));
+            // item.setReplyCount(replyCountMap.get(item.getId()));
+        });
         return new PageResult<>(commentDTOList, Math.toIntExact(commentCount));
     }
 
@@ -136,6 +146,24 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         // 判断是否开启邮箱通知,通知用户
         if (websiteConfig.getIsEmailNotice().equals(TRUE)) {
             CompletableFuture.runAsync(() -> notice(comment));
+        }
+    }
+
+    @Override
+    public void likeComment(Integer commentId) {
+        // 点赞人的key
+        String commentLikeKey = COMMENT_USER_LIKE + UserUtils.getLoginUser().getUserInfoId();
+
+        // 存在该点赞数据 删除点赞
+        if (redisService.sIsMember(commentLikeKey, commentId)){
+            // 点过赞，删除点赞
+            redisService.sRemove(commentLikeKey, commentId);
+            // 点赞-1
+            redisService.hDecr(COMMENT_LIKE_COUNT, commentId.toString(), 1L);
+        }else {
+            // 不存在该点赞数据,点赞
+            redisService.sAdd(commentLikeKey, commentId);
+            redisService.hIncr(COMMENT_LIKE_COUNT, commentId.toString(), 1L);
         }
     }
 }

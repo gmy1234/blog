@@ -1,9 +1,12 @@
 package com.gmy.blog.api;
 
 import com.gmy.blog.annotation.AccessLimit;
+import com.gmy.blog.dao.UserInfoDao;
 import com.gmy.blog.dto.user.UserInfoDTO;
 import com.gmy.blog.service.UserAuthService;
+import com.gmy.blog.service.UserInfoService;
 import com.gmy.blog.vo.Result;
+import com.gmy.blog.vo.user.UserInfoVO;
 import com.gmy.blog.vo.user.UserLoginVo;
 import com.gmy.blog.vo.user.UserVO;
 import io.swagger.annotations.Api;
@@ -12,6 +15,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
 
 /**
  * @author gmydl
@@ -23,10 +29,13 @@ import org.springframework.web.bind.annotation.*;
 @Api("用户账号模块")
 @RestController
 @RequestMapping("/user")
-public class UserAuthApi {
+public class UserApi {
 
     @Autowired
     private UserAuthService userAuthService;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
     /**
      * 发送邮箱验证码
@@ -94,5 +103,35 @@ public class UserAuthApi {
     public Result<String > logout() {
 
         return Result.ok(userAuthService.logout());
+    }
+
+
+    /**
+     * 更新用户信息
+     *
+     * @param userInfoVO 用户信息
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "更新用户信息")
+    @PreAuthorize(value = "hasAuthority('user')")
+    @PutMapping("/info/update")
+    public Result<?> updateUserInfo(@Valid @RequestBody UserInfoVO userInfoVO) {
+        userInfoService.updateUserInfo(userInfoVO);
+        return Result.ok();
+    }
+
+    /**
+     * 更新用户头像
+     *
+     * @param file 文件
+     * @return {@link Result<String>} 头像地址
+     */
+    @ApiOperation(value = "更新用户头像")
+    @PreAuthorize(value = "hasAuthority('user')")
+    @ApiImplicitParam(name = "file", value = "用户头像", required = true, dataType = "MultipartFile")
+    @PostMapping("/info/avatar")
+    public Result<String> updateUserAvatar(MultipartFile file) {
+        String res = userInfoService.updateUserAvatar(file);
+        return Result.ok(res);
     }
 }

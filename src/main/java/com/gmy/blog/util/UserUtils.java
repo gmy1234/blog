@@ -1,8 +1,12 @@
 package com.gmy.blog.util;
 
 import com.gmy.blog.vo.user.UserDetailDTO;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 
 /**
@@ -20,7 +24,9 @@ public class UserUtils {
      * @return 用户登录信息
      */
     public static UserDetailDTO getLoginUser() {
-        return (UserDetailDTO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        return (UserDetailDTO) authentication.getPrincipal();
     }
 
 }

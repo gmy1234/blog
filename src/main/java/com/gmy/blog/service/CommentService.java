@@ -42,4 +42,10 @@ public interface CommentService extends IService<CommentEntity> {
      * @param commentVO 评论信息
      */
     void saveComment(CommentVO commentVO);
+
+    /**
+     * 点赞评论
+     * @param commentId 评论 ID
+     */
+    void likeComment(Integer commentId);
 }

@@ -279,25 +279,14 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
 
     @Override
     public void resetPassword(UserVO userVO) {
-
         // 校验用户信息
-        String email = userVO.getUsername();
-        boolean isEmail = CommonUtils.checkEmail(email);
-        if (!isEmail){
-            throw new BizException("邮箱格式不正确");
-        }
-        // 获取验证吗
-        Object codeObj = redisService.get(REGISTER_VERIFICATION_KEY + email);
-        String code = JSON.parseObject(codeObj.toString(), String.class);
-
-        if (code.equals(userVO.getCode())) {
-           userAuthDao.update(new UserAuthEntity(), new LambdaUpdateWrapper<UserAuthEntity>()
-                   .set(UserAuthEntity::getPassword, BCrypt.hashpw(userVO.getPassword(), BCrypt.gensalt())));
-        }else {
-            throw new BizException("验证码不正确");
+        if (!checkUser(userVO)) {
+            throw new BizException("邮箱尚未注册！");
         }
 
-
+        userAuthDao.update(new UserAuthEntity(), new LambdaUpdateWrapper<UserAuthEntity>()
+                .set(UserAuthEntity::getPassword, BCrypt.hashpw(userVO.getPassword(), BCrypt.gensalt()))
+                .eq(UserAuthEntity::getUsername, userVO.getUsername()));
     }
 
 
