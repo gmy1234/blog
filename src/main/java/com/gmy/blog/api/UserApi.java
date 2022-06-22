@@ -99,7 +99,7 @@ public class UserApi {
     }
 
     @GetMapping("/logout")
-    @PreAuthorize(value = "hasAuthority('user')")
+    @PreAuthorize(value = "hasAnyAuthority('user','admin')")
     public Result<String > logout() {
 
         return Result.ok(userAuthService.logout());

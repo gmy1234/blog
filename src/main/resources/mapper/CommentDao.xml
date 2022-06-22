@@ -132,4 +132,28 @@
         GROUP BY
         parent_id
     </select>
+    <select id="listRepliesByCommentId" resultType="com.gmy.blog.dto.comment.ReplyDTO">
+        SELECT
+            c.user_id,
+            ui.nickname,
+            ui.avatar,
+            ui.web_site,
+            c.reply_user_id,
+            ui.nickname as reply_nickname,
+            ui.web_site as reply_web_site,
+            c.id,
+            c.parent_id,
+            c.comment_content,
+            c.create_time
+        FROM
+            tb_comment c
+            LEFT JOIN tb_user_info ui ON c.user_id = ui.id
+        WHERE
+            c.is_review = 1
+          AND
+            parent_id = #{commentId}
+        ORDER BY
+            c.id ASC
+            LIMIT #{current}, #{size}
+    </select>
 </mapper>

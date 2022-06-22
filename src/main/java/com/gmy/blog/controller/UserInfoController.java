@@ -7,9 +7,7 @@ import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author gmydl
@@ -34,6 +32,19 @@ public class UserInfoController {
     @GetMapping("/online")
     public Result<PageResult<UserOnlineDTO>> listOnlineUsers(ConditionVO conditionVO) {
         return Result.ok(userInfoService.listOnlineUsers(conditionVO));
+    }
+
+    /**
+     * 下线用户
+     *
+     * @param userInfoId 用户信息
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "下线用户")
+    @DeleteMapping("/offline/{userInfoId}")
+    public Result<?> removeOnlineUser(@PathVariable("userInfoId") Integer userInfoId) {
+        userInfoService.removeOnlineUser(userInfoId);
+        return Result.ok();
     }
 
 }

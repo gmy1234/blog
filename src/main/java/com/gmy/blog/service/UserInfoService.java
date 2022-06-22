@@ -38,4 +38,10 @@ public interface UserInfoService extends IService<UserInfoEntity> {
      * @param userInfoVO 用户信息
      */
     void updateUserInfo(UserInfoVO userInfoVO);
+
+    /**
+     * 后台下线用户
+     * @param userInfoId 用户 ID
+     */
+    void removeOnlineUser(Integer userInfoId);
 }

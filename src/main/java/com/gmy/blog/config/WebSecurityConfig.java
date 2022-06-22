@@ -15,11 +15,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -64,6 +67,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    /**
+     * 注册bean sessionRegistry
+     */
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    /**
+     * 解决session失效后 sessionRegistry中session没有同步失效的问题，
+     * 启用并发session控制，首先需要在配置中增加下面监听器
+     */
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -84,6 +104,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/blog/**").permitAll() // 博客网站模块
                 .antMatchers("/article/**").permitAll() // 文章模块
                 .antMatchers("/comment/getComments").permitAll() // 评论模块
+                .antMatchers("/comment/**/replies").permitAll()
                 .antMatchers("/admin/user/login").anonymous() // 设置后台登陆过滤
                 .antMatchers("/admin/user/info").permitAll()
                 .antMatchers("/admin/upload/articles/images").permitAll() // 放行上传文章封面，特殊
@@ -95,11 +116,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
 
-        // 配置异常处理器
-        http    // 未登陆处理（认证失败处理）
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+        // 配置异常处理器和 Session
+        http.exceptionHandling()
+                // 登陆失败处理
+                .authenticationEntryPoint(authenticationEntryPoint)
                 // 权限不足处理（授权失败处理）
-                .accessDeniedHandler(accessDeniedHandler);
+                .accessDeniedHandler(accessDeniedHandler)
+                .and()
+                .sessionManagement()
+                .maximumSessions(20)
+                .sessionRegistry(sessionRegistry());
     }
 
 }

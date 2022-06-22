@@ -54,6 +54,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -209,9 +211,8 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
         payload.put("userId", userInfoId.toString());
         // 使用 JWT 的工具类，通过UserID 生成 Token，
         String token = JWTUtil.createToken(payload, "token".getBytes(StandardCharsets.UTF_8));
-
-        // 把用户信息存入 Redis， userid 为 key
-        redisService.set("login:" + userInfoId, userInfo);
+        // 把用户信息存入 Redis， userid 为 key。并且设置过期时间 15分组
+        redisService.set("login:" + userInfoId, userInfo, 24 * 60 * 60 );
 
         // 把用户的信息返回
         UserInfoDTO userLoginInfo = BeanCopyUtils.copyObject(userInfo, UserInfoDTO.class);
