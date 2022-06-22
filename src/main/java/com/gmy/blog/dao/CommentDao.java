@@ -34,7 +34,7 @@ public interface CommentDao extends BaseMapper<CommentEntity> {
     Integer countCommentDTO(@Param("condition") ConditionVO condition);
 
     /**
-     * 分页统计后台评论数量
+     * 分页统计后台评论
      * @param current   页码
      * @param size      大小
      * @param condition 条件
@@ -70,4 +70,17 @@ public interface CommentDao extends BaseMapper<CommentEntity> {
      * @return 回复数量
      */
     List<ReplyCountDTO> listReplyCountByCommentId(@Param("commentParentId") List<Integer> commentParentId);
+
+
+    /**
+     * 查看当条评论下的回复
+     *
+     * @param commentId 评论id
+     * @param current   当前页码
+     * @param size      大小
+     * @return 回复集合
+     */
+    List<ReplyDTO> listRepliesByCommentId(@Param("current") Long current,
+                                          @Param("size") Long size,
+                                          @Param("commentId") Integer commentId);
 }

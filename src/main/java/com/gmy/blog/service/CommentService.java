@@ -3,11 +3,14 @@ package com.gmy.blog.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gmy.blog.dto.comment.CommentBackDTO;
 import com.gmy.blog.dto.comment.CommentDTO;
+import com.gmy.blog.dto.comment.ReplyDTO;
 import com.gmy.blog.entity.CommentEntity;
 import com.gmy.blog.vo.CommentVO;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.ReviewVO;
+
+import java.util.List;
 
 /**
  * @author gmydl
@@ -48,4 +51,11 @@ public interface CommentService extends IService<CommentEntity> {
      * @param commentId 评论 ID
      */
     void likeComment(Integer commentId);
+
+    /**
+     * 根据评论 ID 查询评论下的回复
+     * @param commentId 评论 ID
+     * @return 回复
+     */
+    List<ReplyDTO> listRepliesByCommentId(Integer commentId);
 }

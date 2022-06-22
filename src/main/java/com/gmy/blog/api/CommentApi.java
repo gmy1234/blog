@@ -1,16 +1,19 @@
 package com.gmy.blog.api;
 
 import com.gmy.blog.dto.comment.CommentDTO;
+import com.gmy.blog.dto.comment.ReplyDTO;
 import com.gmy.blog.service.CommentService;
 import com.gmy.blog.vo.CommentVO;
 import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.Result;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author gmydl
@@ -56,7 +59,7 @@ public class CommentApi {
     /**
      * 点赞评论
      *
-     * @param commentId 评论信息
+     * @param commentId 评论 ID
      * @return {@link Result<CommentDTO>}
      */
     @ApiOperation(value = "点赞评论")
@@ -64,5 +67,19 @@ public class CommentApi {
     public Result<?> likeComment(@PathVariable("commentId") Integer commentId) {
         commentService.likeComment(commentId);
         return Result.ok();
+    }
+
+    /**
+     * 查询评论下的回复
+     *
+     * @param commentId 评论id
+     * @return {@link Result<ReplyDTO>} 回复列表
+     */
+    @ApiOperation(value = "查询评论下的回复")
+    @ApiImplicitParam(name = "commentId", value = "评论id", required = true, dataType = "Integer")
+    @GetMapping("/{commentId}/replies")
+    public Result<List<ReplyDTO>> listRepliesByCommentId(@PathVariable("commentId") Integer commentId) {
+        List<ReplyDTO> res = commentService.listRepliesByCommentId(commentId);
+        return Result.ok(res);
     }
 }

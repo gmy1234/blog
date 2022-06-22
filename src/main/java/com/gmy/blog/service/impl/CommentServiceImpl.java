@@ -186,4 +186,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             redisService.hIncr(COMMENT_LIKE_COUNT, commentId.toString(), 1L);
         }
     }
+
+    @Override
+    public List<ReplyDTO> listRepliesByCommentId(Integer commentId) {
+        // 转换页码查询评论下的回复
+        List<ReplyDTO> replyDTOList = commentDao.listRepliesByCommentId(PageUtils.getLimitCurrent(), PageUtils.getSize(), commentId);
+        // 查询redis的评论点赞数据
+        Map<String, Object> likeCountMap = redisService.hGetAll(COMMENT_LIKE_COUNT);
+        // 封装点赞数据
+        replyDTOList.forEach(item -> item.setLikeCount((Integer) likeCountMap.get(item.getId().toString())));
+        return replyDTOList;
+    }
 }
