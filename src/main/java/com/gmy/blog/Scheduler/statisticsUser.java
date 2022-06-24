@@ -58,6 +58,7 @@ public class statisticsUser {
         Map<String, Long> userAreaMap = userAuthDao.selectList(new LambdaQueryWrapper<UserAuthEntity>().select(UserAuthEntity::getIpSource))
                 .stream()
                 .map(item -> {
+                    // TODO :空指针异常
                     if (StringUtils.isNotBlank(item.getIpSource())) {
                         return item.getIpSource().substring(0, 2)
                                 .replaceAll(PROVINCE, "")

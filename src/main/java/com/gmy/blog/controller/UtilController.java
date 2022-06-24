@@ -39,7 +39,7 @@ public class UtilController {
     @PostMapping("/articles/images")
     public Result<String> uploadArticleImages(MultipartFile file) {
 
-        return Result.ok(uploadStrategyContext
-                .executeUploadStrategy(file, FilePathEnum.ARTICLE.getPath()));
+        String res = uploadStrategyContext.executeUploadStrategy(file, FilePathEnum.ARTICLE.getPath());
+        return Result.ok(res);
     }
 }

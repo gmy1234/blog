@@ -12,7 +12,7 @@ import java.io.InputStream;
  * @author gmydl
  * @title: OssUploadStrategyImpl
  * @projectName blog
- * @description: TODO
+ * @description: OSS 上传策略
  * @date 2022/5/30 14:28
  */
 @Service("ossUploadStrategyImpl")
