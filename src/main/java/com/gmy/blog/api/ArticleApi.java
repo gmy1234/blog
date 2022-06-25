@@ -1,5 +1,6 @@
 package com.gmy.blog.api;
 
+import com.gmy.blog.dto.ArchiveDTO;
 import com.gmy.blog.dto.CategoryDTO;
 import com.gmy.blog.dto.TagDTO;
 import com.gmy.blog.dto.article.ArticleDTO;
@@ -30,6 +31,19 @@ public class ArticleApi {
 
     @Autowired
     private ArticleService articleService;
+
+    /**
+     * 查看文章归档
+     *
+     * @return {@link Result<ArchiveDTO>} 文章归档列表
+     */
+    @ApiOperation(value = "查看文章归档")
+    @GetMapping("/archives")
+    public Result<PageResult<ArchiveDTO>> listArchives() {
+        PageResult<ArchiveDTO> res = articleService.listArchives();
+        return Result.ok(res);
+    }
+
 
     /**
      * 查询首页文章

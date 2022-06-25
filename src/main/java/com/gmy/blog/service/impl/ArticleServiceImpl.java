@@ -9,6 +9,7 @@ import com.gmy.blog.dao.ArticleDao;
 import com.gmy.blog.dao.ArticleTagDao;
 import com.gmy.blog.dao.CategoryDao;
 import com.gmy.blog.dao.TagDao;
+import com.gmy.blog.dto.ArchiveDTO;
 import com.gmy.blog.dto.CategoryDTO;
 import com.gmy.blog.dto.TagDTO;
 import com.gmy.blog.dto.article.*;
@@ -35,6 +36,7 @@ import static com.gmy.blog.constant.CommonConst.ARTICLE_SET;
 import static com.gmy.blog.constant.CommonConst.FALSE;
 import static com.gmy.blog.constant.RedisPrefixConst.*;
 import static com.gmy.blog.enums.ArticleStatusEnum.DRAFT;
+import static com.gmy.blog.enums.ArticleStatusEnum.PUBLIC;
 
 /**
  * @author gmydl
@@ -436,6 +438,20 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         // 查询所有的 tag
         List<TagEntity> tagEntities = tagDao.selectList(null);
         return new PageResult<>(tagEntities, tagEntities.size());
+    }
+
+    @Override
+    public PageResult<ArchiveDTO> listArchives() {
+        // 分页获取所有的文章，转换为 DTO 通过创建时间排序
+        Page<ArticleEntity> articlePage = new Page<>(PageUtils.getLimitCurrent(), PageUtils.getSize());
+        Page<ArticleEntity> articleEntityPage = articleDao.selectPage(articlePage, new LambdaQueryWrapper<ArticleEntity>()
+                .select(ArticleEntity::getId, ArticleEntity::getArticleTitle, ArticleEntity::getCreateTime)
+                .orderByDesc(ArticleEntity::getCreateTime)
+                .eq(ArticleEntity::getIsDelete, FALSE)
+                .eq(ArticleEntity::getStatus, PUBLIC.getStatus()));
+        // 封装
+        List<ArchiveDTO> data = BeanCopyUtils.copyList(articleEntityPage.getRecords(), ArchiveDTO.class);
+        return new PageResult<>(data, (int) articleEntityPage.getTotal());
     }
 
 }
