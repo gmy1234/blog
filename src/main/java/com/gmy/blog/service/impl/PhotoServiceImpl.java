@@ -7,20 +7,20 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gmy.blog.dao.PhotoDao;
 import com.gmy.blog.dto.wallpaper.PhotoBackDTO;
-import com.gmy.blog.vo.PhotoVO;
+import com.gmy.blog.entity.PhotoAlbumEntity;
+import com.gmy.blog.vo.*;
 import com.gmy.blog.entity.PhotoEntity;
 import com.gmy.blog.service.PhotoAlbumService;
 import com.gmy.blog.service.PhotoService;
 import com.gmy.blog.util.BeanCopyUtils;
-import com.gmy.blog.vo.ConditionVO;
-import com.gmy.blog.vo.PageResult;
-import com.gmy.blog.vo.PageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.gmy.blog.constant.CommonConst.FALSE;
 
 /**
  * @author gmydl
@@ -78,5 +78,35 @@ public class PhotoServiceImpl extends ServiceImpl<PhotoDao, PhotoEntity> impleme
                         .build())
                 .collect(Collectors.toList());
         this.updateBatchById(photosData);
+    }
+
+    @Override
+    public void updatePhoto(DeleteVo deleteVo) {
+        // 更新照片状态
+        List<PhotoEntity> photoList = deleteVo.getIdList().stream().map(item -> PhotoEntity.builder()
+                        .id(item)
+                        .isDelete(deleteVo.getIsDelete())
+                        .build())
+                .collect(Collectors.toList());
+        this.updateBatchById(photoList);
+        // 若恢复照片所在的相册已删除，恢复相册
+        if (deleteVo.getIsDelete().equals(FALSE)) {
+            List<PhotoAlbumEntity> photoAlbumList = photoDao.selectList(new LambdaQueryWrapper<PhotoEntity>()
+                            .select(PhotoEntity::getAlbumId)
+                            .in(PhotoEntity::getId, deleteVo.getIdList())
+                            .groupBy(PhotoEntity::getAlbumId))
+                    .stream()
+                    .map(item -> PhotoAlbumEntity.builder()
+                            .id(item.getAlbumId())
+                            .isDelete(FALSE)
+                            .build())
+                    .collect(Collectors.toList());
+            photoAlbumService.updateBatchById(photoAlbumList);
+        }
+    }
+
+    @Override
+    public void deletePhoto(List<Integer> photoIds) {
+        photoDao.deleteBatchIds(photoIds);
     }
 }

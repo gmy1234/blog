@@ -2,6 +2,7 @@ package com.gmy.blog.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gmy.blog.dto.ArchiveDTO;
 import com.gmy.blog.dto.CategoryDTO;
 import com.gmy.blog.dto.TagDTO;
 import com.gmy.blog.dto.article.ArticleBackDTO;
@@ -98,4 +99,11 @@ public interface ArticleService extends IService<ArticleEntity> {
      * @return 标签集合
      */
     PageResult<TagEntity> listTag();
+
+    /**
+     * 查看文章归档
+     * @return 归档集合
+     */
+    PageResult<ArchiveDTO> listArchives();
+
 }

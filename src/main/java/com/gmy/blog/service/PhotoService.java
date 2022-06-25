@@ -2,10 +2,13 @@ package com.gmy.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gmy.blog.dto.wallpaper.PhotoBackDTO;
+import com.gmy.blog.vo.DeleteVo;
 import com.gmy.blog.vo.PhotoVO;
 import com.gmy.blog.entity.PhotoEntity;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
+
+import java.util.List;
 
 /**
  * @author gmydl
@@ -35,4 +38,12 @@ public interface PhotoService extends IService<PhotoEntity> {
      * @param photoVO 照片集
      */
     void moveOtherAlbum(PhotoVO photoVO);
+
+    /**
+     * 更新照片删除状态
+     * @param deleteVo 删除信息
+     */
+    void updatePhoto(DeleteVo deleteVo);
+
+    void deletePhoto(List<Integer> photoIds);
 }
