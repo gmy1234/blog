@@ -8,6 +8,8 @@ import com.gmy.blog.entity.PhotoEntity;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
 
+import java.util.List;
+
 /**
  * @author gmydl
  * @title: PhotoService
@@ -42,4 +44,6 @@ public interface PhotoService extends IService<PhotoEntity> {
      * @param deleteVo 删除信息
      */
     void updatePhoto(DeleteVo deleteVo);
+
+    void deletePhoto(List<Integer> photoIds);
 }

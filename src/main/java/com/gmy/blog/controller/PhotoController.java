@@ -5,10 +5,14 @@ import com.gmy.blog.dto.wallpaper.PhotoBackDTO;
 import com.gmy.blog.vo.*;
 import com.gmy.blog.service.PhotoService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.HashMap;
+import java.util.List;
 
 import static com.gmy.blog.constant.OptTypeConst.UPDATE;
 
@@ -16,7 +20,7 @@ import static com.gmy.blog.constant.OptTypeConst.UPDATE;
  * @author gmydl
  * @title: wallpaperController
  * @projectName blog-api
- * @description: TODO
+ * @description: 后台管理系统图片模块
  * @date 2022/6/7 20:27
  */
 @RestController
@@ -66,7 +70,7 @@ public class PhotoController {
     }
 
     /**
-     * 更新照片删除状态(由正常——>回收箱)
+     * 更新照片删除状态(由正常——>回收箱) 回收 ——>正常
      *
      * @param deleteVO 照片信息
      * @return {@link Result<>}
@@ -78,4 +82,16 @@ public class PhotoController {
         return Result.ok();
     }
 
+    /**
+     * 删除照片
+     *
+     * @param photosIds 照片 Id
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "删除照片")
+    @PostMapping("/deletePhoto")
+    public Result<?> deletePhoto( @RequestBody HashMap<String , List<Integer>> photosIds) {
+        photoService.deletePhoto(photosIds.get("data"));
+        return Result.ok();
+    }
 }

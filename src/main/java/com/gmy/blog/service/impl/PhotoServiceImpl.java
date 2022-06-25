@@ -104,4 +104,9 @@ public class PhotoServiceImpl extends ServiceImpl<PhotoDao, PhotoEntity> impleme
             photoAlbumService.updateBatchById(photoAlbumList);
         }
     }
+
+    @Override
+    public void deletePhoto(List<Integer> photoIds) {
+        photoDao.deleteBatchIds(photoIds);
+    }
 }
