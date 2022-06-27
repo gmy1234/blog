@@ -10,6 +10,7 @@ import com.gmy.blog.entity.TalkEntity;
 import com.gmy.blog.service.TalkService;
 import com.gmy.blog.util.BeanCopyUtils;
 import com.gmy.blog.util.CommonUtils;
+import com.gmy.blog.util.HTMLUtils;
 import com.gmy.blog.util.UserUtils;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
@@ -20,6 +21,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static com.gmy.blog.enums.PhotoAlbumStatusEnum.PUBLIC;
 
 /**
  * @author gmydl
@@ -74,5 +78,23 @@ public class TalkServiceImpl extends ServiceImpl<TalkDao, TalkEntity> implements
     @Override
     public void deleteTalkById(Integer talkId) {
         talkDao.deleteById(talkId);
+    }
+
+    @Override
+    public List<String> listHomeTalks() {
+        List<TalkEntity> talks = talkDao.selectList(new LambdaQueryWrapper<TalkEntity>()
+                .select(TalkEntity::getContent)
+                .eq(TalkEntity::getStatus, PUBLIC.getStatus())
+                .orderByDesc(TalkEntity::getIsTop)
+                .orderByDesc(TalkEntity::getId)
+                .last("limit 10"));
+
+        return talks.stream().map(item -> {
+            int talkLength = item.getContent().length();
+            String talk = item.getContent();
+            return talkLength > 200
+                    ? HTMLUtils.deleteHMTLTag(talk.substring(0, 200))
+                    : HTMLUtils.deleteHMTLTag(talk);
+        }).collect(Collectors.toList());
     }
 }

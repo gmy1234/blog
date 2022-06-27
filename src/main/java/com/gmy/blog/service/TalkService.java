@@ -42,4 +42,10 @@ public interface TalkService extends IService<TalkEntity> {
      * @param talkId 说说 ID
      */
     void deleteTalkById(Integer talkId);
+
+    /**
+     * 前台 查询最新的10条说说
+     * @return 说说内容
+     */
+    List<String> listHomeTalks();
 }
