@@ -56,8 +56,7 @@ public class UtilController {
     @PostMapping("/talk/images")
     public Result<String> uploadTalkImages(MultipartFile file) {
 
-        String res = uploadStrategyContext.executeUploadStrategy(file,
-                FilePathEnum.ARTICLE.getPath(), "oss");
+        String res = uploadStrategyContext.executeUploadStrategy(file, FilePathEnum.ARTICLE.getPath());
         return Result.ok(res);
     }
 }
