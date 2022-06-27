@@ -4,9 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.gmy.blog.dao.CommentDao;
 import com.gmy.blog.dao.TalkDao;
 import com.gmy.blog.dto.TalkBackDTO;
+import com.gmy.blog.dto.TalkDTO;
+import com.gmy.blog.dto.comment.CommentCountDTO;
 import com.gmy.blog.entity.TalkEntity;
+import com.gmy.blog.exception.BizException;
+import com.gmy.blog.service.RedisService;
 import com.gmy.blog.service.TalkService;
 import com.gmy.blog.util.BeanCopyUtils;
 import com.gmy.blog.util.CommonUtils;
@@ -20,9 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.gmy.blog.constant.RedisPrefixConst.TALK_LIKE_COUNT;
 import static com.gmy.blog.enums.PhotoAlbumStatusEnum.PUBLIC;
 
 /**
@@ -37,6 +44,12 @@ public class TalkServiceImpl extends ServiceImpl<TalkDao, TalkEntity> implements
 
     @Autowired
     private TalkDao talkDao;
+
+    @Autowired
+    private CommentDao commentDao;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public PageResult<TalkBackDTO> getAllTalk(ConditionVO conditionVO) {
@@ -96,5 +109,42 @@ public class TalkServiceImpl extends ServiceImpl<TalkDao, TalkEntity> implements
                     ? HTMLUtils.deleteHMTLTag(talk.substring(0, 200))
                     : HTMLUtils.deleteHMTLTag(talk);
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public PageResult<TalkDTO> listTalk() {
+        // 查询说说总量
+        int count = Math.toIntExact(talkDao.selectCount((new LambdaQueryWrapper<TalkEntity>()
+                .eq(TalkEntity::getStatus, PUBLIC.getStatus()))));
+        if (count == 0) {
+            return new PageResult<>();
+        }
+        // 分页查询说说
+        List<TalkDTO> talkDTOList = talkDao.listTalks(PageUtils.getLimitCurrent(), PageUtils.getSize());
+        // 查询说说评论量
+        List<Integer> talkIdList = talkDTOList.stream()
+                .map(TalkDTO::getId)
+                .collect(Collectors.toList());
+        // k： 说说ID，V：评论量
+
+        // 查询说说点赞量
+
+        return new PageResult<>(talkDTOList, count);
+    }
+
+    @Override
+    public TalkDTO obtainTalkById(Integer talkId) {
+        // 查询说说信息
+        TalkDTO talkDTO = talkDao.obtainTalkById(talkId);
+        if (Objects.isNull(talkDTO)) {
+            throw new BizException("说说不存在");
+        }
+        // 查询说说点赞量
+        talkDTO.setLikeCount((Integer) redisService.hGet(TALK_LIKE_COUNT, talkId.toString()));
+        // 转换图片格式
+        if (Objects.nonNull(talkDTO.getImages())) {
+            talkDTO.setImgList(CommonUtils.castList(JSON.parseObject(talkDTO.getImages(), List.class), String.class));
+        }
+        return talkDTO;
     }
 }

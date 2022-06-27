@@ -3,6 +3,7 @@ package com.gmy.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gmy.blog.dto.TalkBackDTO;
+import com.gmy.blog.dto.TalkDTO;
 import com.gmy.blog.entity.TalkEntity;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
@@ -20,7 +21,7 @@ public interface TalkService extends IService<TalkEntity> {
 
 
     /**
-     * 分页获取说说列表
+     * 后台分页获取说说列表
      * @return 说说列表
      */
     PageResult<TalkBackDTO> getAllTalk(ConditionVO conditionVO);
@@ -48,4 +49,17 @@ public interface TalkService extends IService<TalkEntity> {
      * @return 说说内容
      */
     List<String> listHomeTalks();
+
+    /**
+     * 前台 查看说说列表
+     * @return 说说信息
+     */
+    PageResult<TalkDTO> listTalk();
+
+    /**
+     * 前台获取根据 说说 ID 获取说说
+     * @param talkId 说说 ID
+     * @return 获取说说
+     */
+    TalkDTO obtainTalkById(Integer talkId);
 }

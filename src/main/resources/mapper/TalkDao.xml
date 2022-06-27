@@ -37,7 +37,43 @@
             t.create_time
         FROM
             tb_talk t
-                JOIN tb_user_info ui ON t.user_id = ui.id
+            LEFT JOIN tb_user_info ui ON t.user_id = ui.id
+        WHERE
+            t.id = #{talkId}
+    </select>
+
+    <select id="listTalks" resultType="com.gmy.blog.dto.TalkDTO">
+        SELECT
+            t.id,
+            nickname,
+            avatar,
+            content,
+            images,
+            t.is_top,
+            t.create_time
+        FROM
+            tb_talk t
+            LEFT JOIN tb_user_info ui ON t.user_id = ui.id
+        WHERE
+            t.status = 1
+        ORDER BY
+            t.is_top DESC,
+            t.id DESC
+            LIMIT #{current},#{size}
+    </select>
+    <select id="obtainTalkById" resultType="com.gmy.blog.dto.TalkDTO">
+        SELECT
+            t.id,
+            nickname,
+            avatar,
+            content,
+            images,
+            t.is_top,
+            t.status,
+            t.create_time
+        FROM
+            tb_talk t
+            LEFT JOIN tb_user_info ui ON t.user_id = ui.id
         WHERE
             t.id = #{talkId}
     </select>
