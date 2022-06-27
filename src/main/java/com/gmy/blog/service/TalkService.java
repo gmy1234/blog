@@ -62,4 +62,10 @@ public interface TalkService extends IService<TalkEntity> {
      * @return 获取说说
      */
     TalkDTO obtainTalkById(Integer talkId);
+
+    /**
+     * 点赞说说
+     * @param talkId  说说ID
+     */
+    void saveTalkLike(Integer talkId);
 }

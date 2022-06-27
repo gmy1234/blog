@@ -8,10 +8,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -68,4 +65,21 @@ public class TalkApi {
         TalkDTO res = talkService.obtainTalkById(talkId);
         return Result.ok(res);
     }
+
+    /**
+     * 点赞说说
+     *´
+     * @param talkId 说说id
+     * @return {@link Result<>}
+     */
+    @PreAuthorize(value = "hasAnyAuthority('admin','user')")
+    @ApiOperation(value = "点赞说说")
+    @ApiImplicitParam(name = "talkId", value = "说说id", required = true, dataType = "Integer")
+    @PostMapping("/{talkId}/like")
+    public Result<?> saveTalkLike(@PathVariable("talkId") Integer talkId) {
+        talkService.saveTalkLike(talkId);
+        return Result.ok();
+    }
+
+
 }

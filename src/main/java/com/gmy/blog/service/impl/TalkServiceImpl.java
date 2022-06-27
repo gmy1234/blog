@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.gmy.blog.constant.RedisPrefixConst.TALK_LIKE_COUNT;
+import static com.gmy.blog.constant.RedisPrefixConst.TALK_USER_LIKE;
 import static com.gmy.blog.enums.PhotoAlbumStatusEnum.PUBLIC;
 
 /**
@@ -121,13 +122,27 @@ public class TalkServiceImpl extends ServiceImpl<TalkDao, TalkEntity> implements
         }
         // 分页查询说说
         List<TalkDTO> talkDTOList = talkDao.listTalks(PageUtils.getLimitCurrent(), PageUtils.getSize());
+
         // 查询说说评论量
         List<Integer> talkIdList = talkDTOList.stream()
                 .map(TalkDTO::getId)
                 .collect(Collectors.toList());
-        // k： 说说ID，V：评论量
+        // k： 说说ID，V：评论数量
+        List<CommentCountDTO> commentCount = commentDao.listCommentCountByTopicIds(talkIdList);
+        Map<Integer, Integer> commentCountMap = commentCount
+                .stream()
+                .collect(Collectors.toMap(CommentCountDTO::getId, CommentCountDTO::getCommentCount));
 
         // 查询说说点赞量
+        Map<String, Object> likeCountMap = redisService.hGetAll(TALK_LIKE_COUNT);
+        talkDTOList.forEach(item ->{
+            item.setLikeCount((Integer) likeCountMap.get(item.getId().toString()));
+            item.setCommentCount(commentCountMap.get(item.getId()));
+            // 转换图片格式
+            if (Objects.nonNull(item.getImages())) {
+                item.setImgList(CommonUtils.castList(JSON.parseObject(item.getImages(), List.class), String.class));
+            }
+        });
 
         return new PageResult<>(talkDTOList, count);
     }
@@ -146,5 +161,27 @@ public class TalkServiceImpl extends ServiceImpl<TalkDao, TalkEntity> implements
             talkDTO.setImgList(CommonUtils.castList(JSON.parseObject(talkDTO.getImages(), List.class), String.class));
         }
         return talkDTO;
+    }
+
+    @Override
+    public void saveTalkLike(Integer talkId) {
+        TalkEntity talkEntity = talkDao.selectById(talkId);
+        if (Objects.isNull(talkEntity)){
+            throw new BizException("说说 ID 不存在");
+        }
+
+        String talkLikeKey = TALK_USER_LIKE + UserUtils.getLoginUser().getUserInfoId();
+
+        // redis 中有这个说说的点赞记录
+        if (redisService.sIsMember(talkLikeKey, talkId)) {
+            // 说明该用户点过赞，移除
+            redisService.sRemove(talkLikeKey, talkId);
+            // 说说点赞数量 -1
+            redisService.hDecr(TALK_LIKE_COUNT, talkId.toString(), 1L);
+        } else {
+            // 未点过赞的说说 则 增加说说 id
+            redisService.sAdd(talkLikeKey, talkId);
+            redisService.hIncr(TALK_LIKE_COUNT, talkId.toString(), 1L);
+        }
     }
 }

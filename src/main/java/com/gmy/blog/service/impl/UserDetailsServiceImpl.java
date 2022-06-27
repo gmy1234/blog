@@ -70,7 +70,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         if (Objects.isNull(userEntity)) {
             throw new BizException("用户名不存在！");
-
         }
         // 查询用户ID 对应的权限
 
