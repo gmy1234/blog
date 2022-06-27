@@ -102,6 +102,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/resetPassword").anonymous()
                 .antMatchers("/wallpaper/**").permitAll() // 壁纸开放
                 .antMatchers("/blog/**").permitAll() // 博客网站模块
+                .antMatchers("/talk/**").permitAll() // 说说模块
                 .antMatchers("/article/**").permitAll() // 文章模块
                 .antMatchers("/comment/getComments").permitAll() // 评论模块
                 .antMatchers("/comment/**/replies").permitAll()

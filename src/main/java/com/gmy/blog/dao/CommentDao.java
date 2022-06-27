@@ -1,16 +1,14 @@
 package com.gmy.blog.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.gmy.blog.dto.comment.CommentBackDTO;
-import com.gmy.blog.dto.comment.CommentDTO;
-import com.gmy.blog.dto.comment.ReplyCountDTO;
-import com.gmy.blog.dto.comment.ReplyDTO;
+import com.gmy.blog.dto.comment.*;
 import com.gmy.blog.entity.CommentEntity;
 import com.gmy.blog.vo.CommentVO;
 import com.gmy.blog.vo.ConditionVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -83,4 +81,7 @@ public interface CommentDao extends BaseMapper<CommentEntity> {
     List<ReplyDTO> listRepliesByCommentId(@Param("current") Long current,
                                           @Param("size") Long size,
                                           @Param("commentId") Integer commentId);
+
+
+    List<CommentCountDTO> listCommentCountByTopicIds(List<Integer> talkIdList);
 }

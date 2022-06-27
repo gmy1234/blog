@@ -156,4 +156,20 @@
             c.id ASC
             LIMIT #{current}, #{size}
     </select>
+
+    <select id="listCommentCountByTopicIds" resultType="com.gmy.blog.dto.comment.CommentCountDTO">
+        SELECT
+               topic_id as id,
+               count(1) AS comment_count
+        FROM tb_comment
+        WHERE
+            topic_id IN
+            <foreach open="(" collection="talkIdList" item="topicId" separator="," close=")">
+                #{topicId}
+            </foreach>
+        AND
+        parent_id IS NULL
+        GROUP BY
+        topic_id
+    </select>
 </mapper>

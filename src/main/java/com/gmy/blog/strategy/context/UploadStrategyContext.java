@@ -46,4 +46,19 @@ public class UploadStrategyContext {
         String filePath = uploadStrategy.uploadFile(file, path);
         return filePath;
     }
+
+    /**
+     * 上传文件
+     *
+     * @param file 文件
+     * @param path 路径
+     * @return {@link String} 文件地址
+     */
+    public String executeUploadStrategy(MultipartFile file, String path, String uploadMode) {
+        // 通过上传方式获取上传策略
+        UploadStrategy uploadStrategy = uploadStrategyMap.get(uploadMode);
+        // 上传文件，返回文件地址
+        String filePath = uploadStrategy.uploadFile(file, path);
+        return filePath;
+    }
 }
