@@ -60,4 +60,19 @@ public class TalkServiceImpl extends ServiceImpl<TalkDao, TalkEntity> implements
         talkEntity.setUserId(UserUtils.getLoginUser().getUserInfoId());
         this.saveOrUpdate(talkEntity);
     }
+
+    @Override
+    public TalkBackDTO getTalkById(Integer talkId) {
+        TalkBackDTO talk = talkDao.getTalkById(talkId);
+        // 转换图片格式
+        if (Objects.nonNull(talk.getImages())) {
+            talk.setImgList(CommonUtils.castList(JSON.parseObject(talk.getImages(), List.class), String.class));
+        }
+        return talk;
+    }
+
+    @Override
+    public void deleteTalkById(Integer talkId) {
+        talkDao.deleteById(talkId);
+    }
 }

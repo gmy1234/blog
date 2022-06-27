@@ -42,4 +42,22 @@ public class UtilController {
         String res = uploadStrategyContext.executeUploadStrategy(file, FilePathEnum.ARTICLE.getPath());
         return Result.ok(res);
     }
+
+
+    /**
+     * 发布文章时，上传文章封面
+     * Markdown 上传图片
+     *
+     * @param file 文件
+     * @return {@link Result<String>} 文章图片地址
+     */
+    @ApiOperation(value = "上传文章图片")
+    @ApiImplicitParam(name = "file", value = "文章图片", required = true, dataType = "MultipartFile")
+    @PostMapping("/talk/images")
+    public Result<String> uploadTalkImages(MultipartFile file) {
+
+        String res = uploadStrategyContext.executeUploadStrategy(file,
+                FilePathEnum.ARTICLE.getPath(), "oss");
+        return Result.ok(res);
+    }
 }

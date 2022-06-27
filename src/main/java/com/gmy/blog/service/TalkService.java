@@ -30,4 +30,16 @@ public interface TalkService extends IService<TalkEntity> {
      * @param talkVO 说说信息
      */
     void saveOrUpdateTalk(TalkVO talkVO);
+
+    /**
+     * 根据ID 查看说说
+     * @param talkId 说说ID
+     */
+    TalkBackDTO getTalkById(Integer talkId);
+
+    /**
+     * 删除说说
+     * @param talkId 说说 ID
+     */
+    void deleteTalkById(Integer talkId);
 }

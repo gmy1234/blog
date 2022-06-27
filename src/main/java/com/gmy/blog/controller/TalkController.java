@@ -9,10 +9,7 @@ import com.gmy.blog.vo.TalkVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -52,6 +49,33 @@ public class TalkController {
     @PostMapping("/saveOrUpdate")
     public Result<?> saveOrUpdateTalk(@Valid @RequestBody TalkVO talkVO) {
         talkService.saveOrUpdateTalk(talkVO);
+        return Result.ok();
+    }
+
+    /**
+     * 根据ID查看说说
+     *
+     * @param talkId 说说Id
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "根据ID查看说说")
+    @GetMapping("/{talkId}")
+    public Result<TalkBackDTO> getTalkById(@PathVariable("talkId") Integer talkId) {
+        TalkBackDTO res = talkService.getTalkById(talkId);
+        return Result.ok(res);
+    }
+
+
+    /**
+     * 删除说说
+     *
+     * @param talkId 说说Id
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "根据ID查看说说")
+    @PostMapping("/delete/{talkId}")
+    public Result<?> deleteTalkById(@PathVariable("talkId") Integer talkId) {
+         talkService.deleteTalkById(talkId);
         return Result.ok();
     }
 }

@@ -30,6 +30,13 @@ public interface TalkDao extends BaseMapper<TalkEntity> {
     List<TalkBackDTO> getAllTalk(@Param("current") Long limitCurrent,
                                  @Param("size") Long size,
                                  @Param("condition") ConditionVO condition);
+
+    /**
+     * 根据 说说 ID 获取说说信息
+     * @param talkId Id
+     * @return 说说信息
+     */
+    TalkBackDTO getTalkById(@Param("talkId")Integer talkId);
 }
 
 

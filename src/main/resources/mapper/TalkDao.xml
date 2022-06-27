@@ -25,4 +25,20 @@
         t.id DESC
         LIMIT #{current},#{size}
     </select>
+    <select id="getTalkById" resultType="com.gmy.blog.dto.TalkBackDTO">
+        SELECT
+            t.id,
+            nickname,
+            avatar,
+            content,
+            images,
+            t.is_top,
+            t.status,
+            t.create_time
+        FROM
+            tb_talk t
+                JOIN tb_user_info ui ON t.user_id = ui.id
+        WHERE
+            t.id = #{talkId}
+    </select>
 </mapper>

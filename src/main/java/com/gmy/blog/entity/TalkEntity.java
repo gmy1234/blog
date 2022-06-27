@@ -1,8 +1,6 @@
 package com.gmy.blog.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +22,7 @@ import java.time.LocalDateTime;
 @TableName("tb_talk")
 public class TalkEntity {
 
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
