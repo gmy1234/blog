@@ -11,7 +11,7 @@ import java.util.List;
  * @author gmydl
  * @title: RoleDao
  * @projectName blog-api
- * @description: TODO
+ * @description: 角色Dao
  * @date 2022/6/1 23:51
  */
 @Repository

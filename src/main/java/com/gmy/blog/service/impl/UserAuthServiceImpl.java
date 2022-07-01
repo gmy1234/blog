@@ -140,15 +140,17 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuthEntity
      * @return true
      */
     private Boolean checkUser(UserVO user) {
+
+        if (user.getUsername().isEmpty() || user.getPassword().isEmpty()){
+            throw new BizException("用户名或者密码为空");
+        }
+
         // 校验用户的验证码
         Object code = redisService.get(REGISTER_VERIFICATION_KEY + user.getUsername());
         if (code != null && !code.equals(user.getCode())) {
             throw new BizException("验证码错误");
         }
 
-//        if (!user.getCode().equals(redisService.get(USER_CODE_KEY + user.getUsername()))) {
-//            throw new BizException("验证码错误！");
-//        }
         // 校验邮箱是否已经注册
         UserAuthEntity userAuth = userAuthDao.selectOne(new LambdaQueryWrapper<UserAuthEntity>()
                 .select(UserAuthEntity::getUsername)
