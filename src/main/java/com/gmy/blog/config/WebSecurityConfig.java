@@ -107,6 +107,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/article/**").permitAll() // 文章模块
                 .antMatchers("/comment/getComments").permitAll() // 评论模块
                 .antMatchers("/comment/**/replies").permitAll()
+                .antMatchers("/links/**").permitAll()
                 .antMatchers("/admin/user/login").anonymous() // 设置后台登陆过滤
                 .antMatchers("/admin/user/logout").permitAll() // 设置后台登陆过滤
                 .antMatchers("/admin/user/info").permitAll()
