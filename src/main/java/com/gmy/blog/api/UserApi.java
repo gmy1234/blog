@@ -75,14 +75,12 @@ public class UserApi {
     @PostMapping("/login")
     public Result<UserInfoDTO> login(@RequestBody UserLoginVo userLoginVo) {
         UserInfoDTO userInfo = userAuthService.login(userLoginVo);
-
         return Result.ok(userInfo);
     }
 
     @GetMapping("/hello")
     @PreAuthorize(value = "hasAuthority('user')")
     public Result<String> hello() {
-
         return Result.ok("hello");
     }
 
@@ -101,7 +99,6 @@ public class UserApi {
     @GetMapping("/logout")
     @PreAuthorize(value = "hasAnyAuthority('user','admin')")
     public Result<String > logout() {
-
         return Result.ok(userAuthService.logout());
     }
 

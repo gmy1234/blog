@@ -14,6 +14,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 /**
  * @author gmydl
  * @title: EmailConsumer
@@ -32,7 +34,7 @@ public class EmailConsumer {
     @Value("${spring.mail.username}")
     private String email;
 
-    @Autowired
+    @Resource
     private JavaMailSender javaMailSender;
 
     /**

@@ -59,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AccessDeniedHandlerImpl accessDeniedHandler;
 
     @Autowired
-    private AuthenticationSuccessHandler AuthenticationSuccessHandlerImpl;
+    private AuthenticationSuccessHandler authenticationSuccessHandlerImpl;
 
     @Bean
     @Override
