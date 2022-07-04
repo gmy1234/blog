@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
  * @author gmydl
  * @title: TagVo
  * @projectName blog
- * @description: TODO
+ * @description: 标签对象
  * @date 2022/5/27 12:02
  */
 @Data

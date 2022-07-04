@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @author gmydl
  * @title: PhotoEntity
  * @projectName blog-api
- * @description: TODO
+ * @description: 图片实体
  * @date 2022/6/7 20:33
  */
 @Data

@@ -14,7 +14,7 @@ import java.util.List;
  * @author gmydl
  * @title: PageResult
  * @projectName blog-api
- * @description: TODO
+ * @description: 分页对象
  * @date 2022/5/24 23:58
  */
 @Data

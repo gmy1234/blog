@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author gmydl
  * @title: BlogInfoApi
  * @projectName blog-api
- * @description: TODO
+ * @description: 博客基本信息实体
  * @date 2022/6/7 14:42
  */
 @RestController

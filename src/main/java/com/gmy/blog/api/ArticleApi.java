@@ -22,7 +22,7 @@ import java.util.List;
  * @author gmydl
  * @title: ArticleApi
  * @projectName blog-api
- * @description: TODO
+ * @description: 前台文章接口
  * @date 2022/6/10 12:00
  */
 @RestController

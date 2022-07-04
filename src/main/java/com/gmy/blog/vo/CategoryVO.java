@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
  * @author gmydl
  * @title: CategoryVO
  * @projectName blog
- * @description: TODO
+ * @description: 分类对象
  * @date 2022/5/26 14:12
  */
 @Data

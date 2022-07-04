@@ -19,7 +19,7 @@ import java.util.List;
  * @author gmydl
  * @title: PhotoApi
  * @projectName blog-api
- * @description: TODO
+ * @description: 壁纸接口
  * @date 2022/6/8 17:56
  */
 @RestController

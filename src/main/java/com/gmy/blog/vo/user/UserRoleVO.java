@@ -13,7 +13,7 @@ import java.util.List;
  * @author gmydl
  * @title: UserRoleVO
  * @projectName blog-api
- * @description: TODO
+ * @description: 用户角色对象
  * @date 2022/7/1 11:38
  */
 @Data

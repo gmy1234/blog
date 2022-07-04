@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * @author gmydl
  * @title: Category
  * @projectName blog-api
- * @description: TODO
+ * @description: 分类实体
  * @date 2022/5/2421:41
  */
 @Data

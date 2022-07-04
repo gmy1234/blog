@@ -13,7 +13,7 @@ import java.util.List;
  * @author gmydl
  * @title: WebsiteConfigVO
  * @projectName blog-api
- * @description: TODO
+ * @description: 网站设置VO
  * @date 2022/6/8 21:11
  */
 @Data
