@@ -4,8 +4,10 @@ import com.gmy.blog.annotation.OptLog;
 import com.gmy.blog.dto.wallpaper.PhotoBackDTO;
 import com.gmy.blog.vo.*;
 import com.gmy.blog.service.PhotoService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.auth.In;
+import org.apiguardian.api.API;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.gmy.blog.constant.OptTypeConst.SAVE;
 import static com.gmy.blog.constant.OptTypeConst.UPDATE;
 
 /**
@@ -25,6 +28,7 @@ import static com.gmy.blog.constant.OptTypeConst.UPDATE;
  */
 @RestController
 @RequestMapping("/admin/wallpaper")
+@Api(tags = "照片模块")
 public class PhotoController {
 
     @Autowired
@@ -49,6 +53,7 @@ public class PhotoController {
      * @param photoVo 照片
      * @return {@link Result<PhotoBackDTO>}
      */
+    @OptLog(optType = SAVE)
     @ApiOperation(value = "保存照片")
     @PostMapping("/uploadPhotos")
     public Result<?> uploadPhotos(@RequestBody PhotoVO photoVo) {
@@ -62,7 +67,8 @@ public class PhotoController {
      * @param photoVO 照片信息
      * @return {@link Result<>}
      */
-    @ApiOperation(value = "移动照片相册")
+    @OptLog(optType = UPDATE)
+    @ApiOperation(value = "移动照片到另一个相册")
     @PostMapping("/moveOtherAlbum")
     public Result<?> moveOtherAlbum(@Valid @RequestBody PhotoVO photoVO) {
         photoService.moveOtherAlbum(photoVO);
