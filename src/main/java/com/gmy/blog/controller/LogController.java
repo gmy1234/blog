@@ -28,14 +28,26 @@ public class LogController {
     private OperationLogService operationLogService;
 
     /**
-     * 查看操作日志
+     * 查看所有操作日志
      *
      * @param conditionVO 条件
      * @return {@link Result<OperationLogDTO>} 日志列表
      */
-    @ApiOperation(value = "查看操作日志")
+    @ApiOperation(value = "查看所有操作日志")
     @GetMapping("/operationLogs")
     public Result<PageResult<OperationLogDTO>> listOperationLogs(ConditionVO conditionVO) {
         return Result.ok(operationLogService.listOperationLogs(conditionVO));
+    }
+
+    /**
+     * 根据日志 ID 查询 日志详细信息
+     * @param logId 日志 ID
+     * @return 日志详细信息
+     */
+    @ApiOperation(value = "根据日志ID查看日志详情")
+    @RequestMapping("/logsDetail")
+    public Result<OperationLogDTO> operationLogsDetailById(Integer logId){
+        OperationLogDTO res = operationLogService.operationLogsDetailById(logId);
+        return Result.ok(res);
     }
 }

@@ -20,4 +20,11 @@ public interface OperationLogService extends IService<OperationLogEntity> {
      * @return 操作日志
      */
     PageResult<OperationLogDTO> listOperationLogs(ConditionVO conditionVO);
+
+    /**
+     * 根据日志 ID 查看日志详细信息
+     * @param logId 日志 ID
+     * @return 详细信息
+     */
+    OperationLogDTO operationLogsDetailById(Integer logId);
 }

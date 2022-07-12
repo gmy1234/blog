@@ -12,6 +12,7 @@ import com.gmy.blog.util.BeanCopyUtils;
 import com.gmy.blog.vo.ConditionVO;
 import com.gmy.blog.vo.PageResult;
 import com.gmy.blog.vo.PageUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +43,12 @@ public class OperationLogServiceImpl extends ServiceImpl<OperationLogDao, Operat
                 .orderByDesc(OperationLogEntity::getId));
         List<OperationLogDTO> operationLogDTOList = BeanCopyUtils.copyList(operationLogPage.getRecords(), OperationLogDTO.class);
         return new PageResult<>(operationLogDTOList, (int) operationLogPage.getTotal());
+    }
+
+    @Override
+    public OperationLogDTO operationLogsDetailById(Integer logId) {
+        OperationLogEntity operationLogEntity = operationLogDao.selectById(logId);
+        OperationLogDTO res = BeanCopyUtils.copyObject(operationLogEntity, OperationLogDTO.class);
+        return res;
     }
 }
