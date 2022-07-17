@@ -81,6 +81,8 @@ public class CommonConst {
      */
     public static final String APPLICATION_JSON = "application/json;charset=utf-8";
 
+    public static final String CONTENT_TYPE = "application/json";
+
     /**
      * 默认的配置id
      */
