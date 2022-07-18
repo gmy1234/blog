@@ -43,7 +43,6 @@ public class UtilController {
         return Result.ok(res);
     }
 
-
     /**
      * 发布文章时，上传文章封面
      * Markdown 上传图片

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.*;
 import java.security.InvalidKeyException;
@@ -63,13 +64,13 @@ public class MinioTest {
      */
     @Test
     public void uploadForStream() throws FileNotFoundException {
-        InputStream file = new FileInputStream("/Users/gmydl/Desktop/picture/new2.png");
-
+        ClassPathResource classPathResource = new ClassPathResource("one.png");
         try {
+            InputStream inputStream = classPathResource.getInputStream();
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(gmyBucketName)
-                    .object("dir/to/p.png")
-                    .stream(file, -1, 10485760)
+                    .object("dir/to/one.png")
+                    .stream(inputStream, -1, 10485760)
                     .build());
         } catch (MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -85,7 +86,6 @@ public class MinioTest {
                     .object("image1.png")
                     .filename("/Users/gmydl/Desktop/picture/new2.png")
                     .build());
-
         } catch (MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -112,7 +112,6 @@ public class MinioTest {
      */
     @Test
     public void getInfo(){
-
         try {
             StatObjectResponse statObjectResponse = minioClient.statObject(StatObjectArgs.builder()
                     .bucket(gmyBucketName)
