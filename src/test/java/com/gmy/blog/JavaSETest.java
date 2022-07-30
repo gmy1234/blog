@@ -3,12 +3,14 @@ package com.gmy.blog;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author guanmy
@@ -64,5 +66,12 @@ public class JavaSETest {
         baos.close();
         inputStream.close();
         accept.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+//        FileOutputStream out = new FileOutputStream("./text.txt");
+//        out.write("gmy,fei".getBytes(StandardCharsets.UTF_8));
+//        out.close();
+
     }
 }

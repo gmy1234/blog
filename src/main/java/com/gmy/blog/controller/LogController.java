@@ -8,9 +8,9 @@ import com.gmy.blog.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author gmydl
@@ -45,9 +45,22 @@ public class LogController {
      * @return 日志详细信息
      */
     @ApiOperation(value = "根据日志ID查看日志详情")
-    @RequestMapping("/logsDetail")
+    @GetMapping("/logsDetail")
     public Result<OperationLogDTO> operationLogsDetailById(Integer logId){
         OperationLogDTO res = operationLogService.operationLogsDetailById(logId);
         return Result.ok(res);
+    }
+
+    /**
+     * 删除操作日志
+     *
+     * @param logIdList 日志id列表
+     * @return {@link Result<>}
+     */
+    @ApiOperation(value = "删除操作日志")
+    @DeleteMapping("/operation/logs")
+    public Result<?> deleteOperationLogs(@RequestBody List<Integer> logIdList) {
+        operationLogService.removeByIds(logIdList);
+        return Result.ok();
     }
 }
